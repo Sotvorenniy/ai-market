@@ -1,21 +1,22 @@
 #!/usr/bin/env node
-// Local preview of the catalog site.
+// Local development server for the catalog site. Always shows the real marketplace in this repository:
+// catalog data is rebuilt from .claude-plugin/ and plugins/ on every request, so new or edited plugins
+// appear after a page reload.
 //
-//   npm run dev               # data built live from this repository on every request
-//   npm run dev -- --sample   # sample data from scripts/dev (the repo has few or no plugins yet)
+//   npm run dev                  # inside catalog/
 //   npm run dev -- --port 5000
 
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildCatalog, repoFromRemote } from './build-catalog.mjs';
+import { buildCatalog, buildFeed, pagesUrl, repoFromRemote } from './build.mjs';
 import { execFileSync } from 'node:child_process';
 
-const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const siteDir = join(root, 'site');
+const catalogDir = resolve(fileURLToPath(new URL('..', import.meta.url)));
+const root = resolve(catalogDir, '..');
+const siteDir = join(catalogDir, 'src');
 const args = process.argv.slice(2);
-const sample = args.includes('--sample');
 const portIndex = args.indexOf('--port');
 const port = Number(portIndex === -1 ? 4173 : args[portIndex + 1]) || 4173;
 
@@ -27,6 +28,7 @@ const TYPES = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.ico': 'image/x-icon',
+  '.xml': 'application/atom+xml; charset=utf-8',
 };
 
 function repo() {
@@ -37,19 +39,25 @@ function repo() {
   }
 }
 
-async function data(name) {
-  if (sample) return readFile(join(root, 'scripts', 'dev', `sample-${name}`), 'utf8');
-  const { catalog, releases, warnings } = buildCatalog({ root, repo: repo() });
-  for (const warning of warnings) console.warn(`! ${warning}`);
-  return JSON.stringify(name === 'catalog.json' ? catalog : releases);
+async function load() {
+  const result = buildCatalog({ root, repo: repo() });
+  for (const warning of result.warnings) console.warn(`! ${warning}`);
+  return result;
 }
 
 const server = createServer(async (req, res) => {
   const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   try {
     if (path === '/data/catalog.json' || path === '/data/releases.json') {
+      const { catalog, releases } = await load();
       res.writeHead(200, { 'content-type': TYPES['.json'], 'cache-control': 'no-store' });
-      res.end(await data(path.slice('/data/'.length)));
+      res.end(JSON.stringify(path.endsWith('catalog.json') ? catalog : releases));
+      return;
+    }
+    if (path === '/feed.xml') {
+      const { catalog, releases } = await load();
+      res.writeHead(200, { 'content-type': TYPES['.xml'], 'cache-control': 'no-store' });
+      res.end(buildFeed(releases, { title: `${catalog.marketplace.name} releases`, siteUrl: pagesUrl(catalog.marketplace.repo) }));
       return;
     }
     const file = normalize(join(siteDir, path.endsWith('/') ? `${path}index.html` : path));
@@ -66,5 +74,5 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Catalog preview: http://localhost:${port}/ (${sample ? 'sample data' : 'live data from this repo'})`);
+  console.log(`Catalog dev server: http://localhost:${port}/ (data rebuilt from this repository on every request)`);
 });

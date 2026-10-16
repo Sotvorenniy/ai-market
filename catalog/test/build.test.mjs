@@ -5,8 +5,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import {
-  BODY_LIMIT, BuildError, buildCatalog, changelogNotes, repoFromRemote, trimBody,
-} from '../build-catalog.mjs';
+  BODY_LIMIT, BuildError, buildCatalog, buildFeed, changelogNotes, pagesUrl, repoFromRemote, trimBody,
+} from '../scripts/build.mjs';
 
 const NOW = new Date('2026-10-16T12:00:00Z');
 const dirs = [];
@@ -64,12 +64,13 @@ before(() => {
     ]),
     'plugins/code-review/.claude-plugin/plugin.json': {
       name: 'code-review', version: '1.4.0', description: 'Manifest description.', author: { name: 'Platform team' }, license: 'MIT',
+      dependencies: ['security-guard', { name: 'tokens', marketplace: 'other' }, { bad: true }],
       userConfig: { JIRA_TOKEN: { title: 'Jira API token', sensitive: true } },
     },
     'plugins/code-review/README.md': '# Code review\n\nInstall and enjoy.\n',
     'plugins/code-review/skills/review-pr/SKILL.md': '---\nname: review-pr\ndescription: Reviews a diff. Use when asked for a review.\ntags: [diff, pull-request]\n---\n# Review\n\nSteps.\n',
     'plugins/code-review/skills/no-frontmatter/SKILL.md': '# Missing frontmatter\n',
-    'plugins/code-review/agents/code-reviewer.md': '---\nname: code-reviewer\ndescription: Read-only reviewer.\n---\nPrompt.\n',
+    'plugins/code-review/agents/code-reviewer.md': '---\nname: code-reviewer\ndisplayName: Code Reviewer\ndescription: Read-only reviewer.\ntools: Read, Grep, Glob\nmodel: sonnet\n---\nPrompt.\n',
     'plugins/code-review/commands/review.md': '---\ndescription: Run the review.\n---\nDo it.\n',
     'plugins/code-review/commands/git/sync.md': '---\ndescription: Sync branch.\n---\n',
     'plugins/code-review/hooks/hooks.json': {
@@ -127,6 +128,8 @@ test('plugin fields follow the source precedence', () => {
   assert.equal(plugin.hasEvals, true);
   assert.equal(plugin.path, 'plugins/code-review');
   assert.deepEqual(plugin.tags, ['review']);
+  assert.deepEqual(plugin.dependencies, ['security-guard', 'tokens@other']);
+  assert.equal(item('code-review').displayName, 'code-review');
 
   const custom = full.catalog.plugins.find((p) => p.name === 'custom-paths');
   assert.equal(custom.description, 'Uses manifest paths.');
@@ -147,7 +150,11 @@ test('skills, agents and commands are read from default folders', () => {
   assert.deepEqual(skill.tags, ['diff', 'pull-request']);
   assert.equal(skill.path, 'plugins/code-review/skills/review-pr/SKILL.md');
   assert.equal(skill.body, '# Review\n\nSteps.');
-  assert.equal(item('code-review/agent/code-reviewer').description, 'Read-only reviewer.');
+  const agent = item('code-review/agent/code-reviewer');
+  assert.equal(agent.description, 'Read-only reviewer.');
+  assert.equal(agent.displayName, 'Code Reviewer');
+  assert.deepEqual(agent.meta, { tools: ['Read', 'Grep', 'Glob'], model: 'sonnet' });
+  assert.equal(skill.displayName, 'review-pr', 'displayName falls back to the name');
   assert.equal(item('code-review/command/review').description, 'Run the review.');
   assert.ok(item('code-review/command/git:sync'), 'nested command uses a colon namespace');
 });
@@ -163,6 +170,7 @@ test('hooks become one item per event and matcher', () => {
   const bash = item('code-review/hook/pretooluse-bash');
   assert.equal(bash.description, 'Blocks dangerous commands.');
   assert.deepEqual(bash.meta, { event: 'PreToolUse · Bash' });
+  assert.equal(bash.displayName, 'PreToolUse · Bash');
   assert.equal(item('code-review/hook/sessionstart').description, 'Guardrails.');
 });
 
@@ -310,6 +318,25 @@ test('trimBody caps long bodies', () => {
   assert.ok(trimmed.length <= BODY_LIMIT + 3);
   assert.ok(trimmed.endsWith('…'));
   assert.equal(trimBody('  short  '), 'short');
+});
+
+test('pagesUrl derives the GitHub Pages address', () => {
+  assert.equal(pagesUrl('Sotvorenniy/ai-market'), 'https://sotvorenniy.github.io/ai-market/');
+  assert.equal(pagesUrl(null), null);
+});
+
+test('buildFeed writes a valid, escaped Atom feed', () => {
+  const feed = buildFeed([
+    { plugin: 'a&b', version: '1.1.0', date: '2026-10-10', kind: 'rollback', notes: ['Fixed <tags>'] },
+    { plugin: 'c', version: '1.0.0', date: '2026-10-01', kind: 'release', notes: [] },
+  ], { title: 'ai-market releases', siteUrl: 'https://sotvorenniy.github.io/ai-market/' });
+  assert.match(feed, /^<\?xml version="1.0" encoding="utf-8"\?>/);
+  assert.match(feed, /<updated>2026-10-10T00:00:00Z<\/updated>/);
+  assert.ok(feed.includes('<title>a&amp;b v1.1.0 (rollback)</title>'));
+  assert.ok(feed.includes('<summary>Fixed &lt;tags&gt;</summary>'));
+  assert.ok(feed.includes('<link href="https://sotvorenniy.github.io/ai-market/#/plugin/a%26b"/>'));
+  assert.ok(feed.includes('<summary>No release notes.</summary>'));
+  assert.equal((feed.match(/<entry>/g) ?? []).length, 2);
 });
 
 test('repoFromRemote parses GitHub remotes', () => {

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ai-market catalog</title>
+  <meta name="description" content="Find and install Claude Code plugins, skills and agents from the ai-market marketplace.">
+  <meta name="color-scheme" content="dark light">
+  <script>
+    // Apply the saved theme before first paint so the page never flashes the wrong theme.
+    try { if (localStorage.getItem('ai-market:theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch {}
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f8ef7'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white'%3E%E2%97%86%3C/text%3E%3C/svg%3E">
+  <link rel="alternate" type="application/atom+xml" title="ai-market releases" href="feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#view">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <span class="brand-mark" aria-hidden="true">◆</span>
+      <span class="brand-name">Catalog</span>
+      <span class="brand-badge mono" id="brand-badge">ai-market</span>
+    </a>
+    <form class="header-search" id="header-search" role="search">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Search the catalog…" aria-label="Search the catalog">
+    </form>
+    <div class="header-actions">
+      <button class="header-btn mono" id="palette-button" type="button" data-palette-open aria-label="Open quick search"><kbd>⌘K</kbd></button>
+      <button class="header-btn icon" id="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme">☾</button>
+      <a class="github-link" id="github-link" href="#" target="_blank" rel="noopener" hidden>GitHub ↗</a>
+    </div>
+  </header>
+
+  <div id="view" tabindex="-1"></div>
+
+  <div class="palette-backdrop" id="palette" hidden>
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Quick search">
+      <div class="palette-input">
+        <span class="faint" aria-hidden="true">⌕</span>
+        <input id="palette-q" type="text" autocomplete="off" spellcheck="false" placeholder="Go to an artifact…"
+          role="combobox" aria-expanded="true" aria-controls="palette-results" aria-label="Go to an artifact">
+        <kbd class="mono">ESC</kbd>
+      </div>
+      <div class="palette-results" id="palette-results" role="listbox"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="ok" aria-hidden="true">✓</span> <span data-toast-text>Copied to clipboard</span></div>
+</body>
+</html>

@@ -21,7 +21,7 @@
   "plugins": [
     {
       "name": "code-review",
-      "displayName": "code-review",
+      "displayName": "Code Review",
       "version": "1.4.0",
       "description": "Reviews pull requests against our engineering checklist and flags risky changes before merge.",
       "category": "Development",
@@ -42,11 +42,14 @@
         "code-review/skill/security-review",
         "code-review/agent/code-reviewer",
         "code-review/command/review"
+      ],
+      "dependencies": [
+        "security-guard"
       ]
     },
     {
       "name": "test-writer",
-      "displayName": "test-writer",
+      "displayName": "Test Writer",
       "version": "2.1.0",
       "description": "Writes and repairs unit and end-to-end tests that follow the conventions of each repository.",
       "category": "Testing",
@@ -66,11 +69,12 @@
         "test-writer/skill/write-unit-tests",
         "test-writer/skill/e2e-playwright",
         "test-writer/agent/test-engineer"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "release-notes",
-      "displayName": "release-notes",
+      "displayName": "Release Notes",
       "version": "1.0.3",
       "description": "Turns merged pull requests and commits into readable changelogs and release notes.",
       "category": "Delivery",
@@ -90,11 +94,12 @@
         "release-notes/skill/changelog-writer",
         "release-notes/command/release-notes",
         "release-notes/hook/changelog-reminder"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "docs-kit",
-      "displayName": "docs-kit",
+      "displayName": "Docs Kit",
       "version": "1.2.1",
       "description": "Writes API docs, architecture decision records and onboarding guides in our documentation style.",
       "category": "Documentation",
@@ -114,11 +119,12 @@
         "docs-kit/skill/api-docs",
         "docs-kit/skill/adr-writer",
         "docs-kit/agent/tech-writer"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "jira-sync",
-      "displayName": "jira-sync",
+      "displayName": "Jira Sync",
       "version": "0.9.0",
       "description": "Connects Claude Code to Jira so it can read tickets, create issues from diffs and update status.",
       "category": "Productivity",
@@ -138,11 +144,12 @@
         "jira-sync/mcp/jira",
         "jira-sync/skill/ticket-from-diff",
         "jira-sync/command/ticket"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "figma-to-code",
-      "displayName": "figma-to-code",
+      "displayName": "Figma To Code",
       "version": "1.1.0",
       "description": "Implements Figma frames as components that use our design system tokens.",
       "category": "Design",
@@ -161,11 +168,15 @@
       "items": [
         "figma-to-code/skill/implement-frame",
         "figma-to-code/agent/ui-builder"
+      ],
+      "dependencies": [
+        "docs-kit",
+        "design-tokens@other-marketplace"
       ]
     },
     {
       "name": "seo-content",
-      "displayName": "seo-content",
+      "displayName": "SEO Content",
       "version": "1.3.2",
       "description": "Helps editors and developers ship search-friendly articles: audits, headlines and structured data.",
       "category": "Content",
@@ -185,11 +196,12 @@
         "seo-content/skill/seo-audit",
         "seo-content/skill/headline-variants",
         "seo-content/agent/copy-editor"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "db-helper",
-      "displayName": "db-helper",
+      "displayName": "Db Helper",
       "version": "1.0.0",
       "description": "Reviews SQL, plans safe migrations and lets Claude query a read-only Postgres replica.",
       "category": "Data",
@@ -209,11 +221,12 @@
         "db-helper/skill/sql-review",
         "db-helper/skill/migration-planner",
         "db-helper/mcp/postgres-readonly"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "security-guard",
-      "displayName": "security-guard",
+      "displayName": "Security Guard",
       "version": "2.0.0",
       "description": "Guardrails that stop secrets and dangerous shell commands before they run.",
       "category": "Security",
@@ -233,11 +246,12 @@
         "security-guard/hook/secret-scan",
         "security-guard/hook/block-dangerous-bash",
         "security-guard/skill/dependency-audit"
-      ]
+      ],
+      "dependencies": []
     },
     {
       "name": "k8s-helper",
-      "displayName": "k8s-helper",
+      "displayName": "K8s Helper",
       "version": "0.4.0",
       "description": "Kubernetes manifests review and kubectl helpers, maintained in its own repository.",
       "category": "Delivery",
@@ -252,7 +266,8 @@
       "path": null,
       "external": true,
       "sourceUrl": "https://github.com/sotvorenniy/k8s-helper",
-      "items": []
+      "items": [],
+      "dependencies": []
     }
   ],
   "items": [
@@ -269,7 +284,8 @@
       ],
       "path": "plugins/code-review",
       "body": "# code-review\n\nReviews pull requests against our engineering checklist and flags risky changes before merge.\n\n## Owner\nPlatform team",
-      "meta": {}
+      "meta": {},
+      "displayName": "Code Review"
     },
     {
       "id": "code-review/skill/review-pr",
@@ -284,7 +300,14 @@
       ],
       "path": "plugins/code-review/skills/review-pr/SKILL.md",
       "body": "## When to use\n- Before opening a pull request\n- When a reviewer asks for a second opinion\n\n## Steps\n1. Collect the diff with `scripts/collect_diff.sh`\n2. Check every file against `reference/checklist.md`\n3. Report findings grouped by severity: blocking, should fix, nit\n\n```bash\ngit diff origin/main...HEAD --stat\n```",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Review PR"
     },
     {
       "id": "code-review/skill/security-review",
@@ -299,7 +322,14 @@
       ],
       "path": "plugins/code-review/skills/security-review/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Security Review"
     },
     {
       "id": "code-review/agent/code-reviewer",
@@ -313,7 +343,15 @@
       ],
       "path": "plugins/code-review/agents/code-reviewer.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob"
+        ],
+        "model": "sonnet"
+      },
+      "displayName": "Code Reviewer"
     },
     {
       "id": "code-review/command/review",
@@ -327,7 +365,13 @@
       ],
       "path": "plugins/code-review/commands/review.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Bash",
+          "Read"
+        ]
+      },
+      "displayName": "Review"
     },
     {
       "id": "test-writer",
@@ -342,7 +386,8 @@
       ],
       "path": "plugins/test-writer",
       "body": "# test-writer\n\nWrites and repairs unit and end-to-end tests that follow the conventions of each repository.\n\n## Owner\nQA guild",
-      "meta": {}
+      "meta": {},
+      "displayName": "Test Writer"
     },
     {
       "id": "test-writer/skill/write-unit-tests",
@@ -358,7 +403,14 @@
       ],
       "path": "plugins/test-writer/skills/write-unit-tests/SKILL.md",
       "body": "## When to use\n- New code without tests\n- A bug fix that needs a regression test\n\n## Rules\n- Detect the framework from `package.json` before writing anything\n- One behaviour per test, named after the behaviour\n- Never mock the module under test",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Write Unit Tests"
     },
     {
       "id": "test-writer/skill/e2e-playwright",
@@ -374,7 +426,14 @@
       ],
       "path": "plugins/test-writer/skills/e2e-playwright/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "E2E Playwright"
     },
     {
       "id": "test-writer/agent/test-engineer",
@@ -389,7 +448,15 @@
       ],
       "path": "plugins/test-writer/agents/test-engineer.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob"
+        ],
+        "model": "sonnet"
+      },
+      "displayName": "Test Engineer"
     },
     {
       "id": "release-notes",
@@ -404,7 +471,8 @@
       ],
       "path": "plugins/release-notes",
       "body": "# release-notes\n\nTurns merged pull requests and commits into readable changelogs and release notes.\n\n## Owner\nPlatform team",
-      "meta": {}
+      "meta": {},
+      "displayName": "Release Notes"
     },
     {
       "id": "release-notes/skill/changelog-writer",
@@ -419,7 +487,14 @@
       ],
       "path": "plugins/release-notes/skills/changelog-writer/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Changelog Writer"
     },
     {
       "id": "release-notes/command/release-notes",
@@ -433,7 +508,13 @@
       ],
       "path": "plugins/release-notes/commands/release-notes.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Bash",
+          "Read"
+        ]
+      },
+      "displayName": "Release Notes"
     },
     {
       "id": "release-notes/hook/changelog-reminder",
@@ -449,8 +530,9 @@
       "path": "plugins/release-notes/hooks/hooks.json",
       "body": "",
       "meta": {
-        "event": "PreToolUse · Bash (git push)"
-      }
+        "event": "PreToolUse \u00b7 Bash (git push)"
+      },
+      "displayName": "PreToolUse \u00b7 Bash (git push)"
     },
     {
       "id": "docs-kit",
@@ -465,7 +547,8 @@
       ],
       "path": "plugins/docs-kit",
       "body": "# docs-kit\n\nWrites API docs, architecture decision records and onboarding guides in our documentation style.\n\n## Owner\nDeveloper experience",
-      "meta": {}
+      "meta": {},
+      "displayName": "Docs Kit"
     },
     {
       "id": "docs-kit/skill/api-docs",
@@ -480,7 +563,14 @@
       ],
       "path": "plugins/docs-kit/skills/api-docs/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "API Docs"
     },
     {
       "id": "docs-kit/skill/adr-writer",
@@ -495,7 +585,14 @@
       ],
       "path": "plugins/docs-kit/skills/adr-writer/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "ADR Writer"
     },
     {
       "id": "docs-kit/agent/tech-writer",
@@ -510,7 +607,15 @@
       ],
       "path": "plugins/docs-kit/agents/tech-writer.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob"
+        ],
+        "model": "sonnet"
+      },
+      "displayName": "Tech Writer"
     },
     {
       "id": "jira-sync",
@@ -525,7 +630,8 @@
       ],
       "path": "plugins/jira-sync",
       "body": "# jira-sync\n\nConnects Claude Code to Jira so it can read tickets, create issues from diffs and update status.\n\n## Owner\nDelivery office",
-      "meta": {}
+      "meta": {},
+      "displayName": "Jira Sync"
     },
     {
       "id": "jira-sync/mcp/jira",
@@ -547,7 +653,8 @@
           "JIRA_URL",
           "API token (stored in your keychain)"
         ]
-      }
+      },
+      "displayName": "jira"
     },
     {
       "id": "jira-sync/skill/ticket-from-diff",
@@ -562,7 +669,14 @@
       ],
       "path": "plugins/jira-sync/skills/ticket-from-diff/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Ticket From Diff"
     },
     {
       "id": "jira-sync/command/ticket",
@@ -576,7 +690,13 @@
       ],
       "path": "plugins/jira-sync/commands/ticket.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Bash",
+          "Read"
+        ]
+      },
+      "displayName": "Ticket"
     },
     {
       "id": "figma-to-code",
@@ -591,7 +711,8 @@
       ],
       "path": "plugins/figma-to-code",
       "body": "# figma-to-code\n\nImplements Figma frames as components that use our design system tokens.\n\n## Owner\nDesign system team",
-      "meta": {}
+      "meta": {},
+      "displayName": "Figma To Code"
     },
     {
       "id": "figma-to-code/skill/implement-frame",
@@ -607,7 +728,14 @@
       ],
       "path": "plugins/figma-to-code/skills/implement-frame/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Implement Frame"
     },
     {
       "id": "figma-to-code/agent/ui-builder",
@@ -622,7 +750,15 @@
       ],
       "path": "plugins/figma-to-code/agents/ui-builder.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob"
+        ],
+        "model": "sonnet"
+      },
+      "displayName": "Ui Builder"
     },
     {
       "id": "seo-content",
@@ -637,7 +773,8 @@
       ],
       "path": "plugins/seo-content",
       "body": "# seo-content\n\nHelps editors and developers ship search-friendly articles: audits, headlines and structured data.\n\n## Owner\nEditorial tech",
-      "meta": {}
+      "meta": {},
+      "displayName": "SEO Content"
     },
     {
       "id": "seo-content/skill/seo-audit",
@@ -653,7 +790,14 @@
       ],
       "path": "plugins/seo-content/skills/seo-audit/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "SEO Audit"
     },
     {
       "id": "seo-content/skill/headline-variants",
@@ -668,7 +812,14 @@
       ],
       "path": "plugins/seo-content/skills/headline-variants/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Headline Variants"
     },
     {
       "id": "seo-content/agent/copy-editor",
@@ -683,7 +834,15 @@
       ],
       "path": "plugins/seo-content/agents/copy-editor.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob"
+        ],
+        "model": "sonnet"
+      },
+      "displayName": "Copy Editor"
     },
     {
       "id": "db-helper",
@@ -698,7 +857,8 @@
       ],
       "path": "plugins/db-helper",
       "body": "# db-helper\n\nReviews SQL, plans safe migrations and lets Claude query a read-only Postgres replica.\n\n## Owner\nData platform",
-      "meta": {}
+      "meta": {},
+      "displayName": "Db Helper"
     },
     {
       "id": "db-helper/skill/sql-review",
@@ -714,7 +874,14 @@
       ],
       "path": "plugins/db-helper/skills/sql-review/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "SQL Review"
     },
     {
       "id": "db-helper/skill/migration-planner",
@@ -729,7 +896,14 @@
       ],
       "path": "plugins/db-helper/skills/migration-planner/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Migration Planner"
     },
     {
       "id": "db-helper/mcp/postgres-readonly",
@@ -750,7 +924,8 @@
         "config": [
           "Connection string (stored in your keychain)"
         ]
-      }
+      },
+      "displayName": "postgres-readonly"
     },
     {
       "id": "security-guard",
@@ -765,7 +940,8 @@
       ],
       "path": "plugins/security-guard",
       "body": "# security-guard\n\nGuardrails that stop secrets and dangerous shell commands before they run.\n\n## Owner\nSecurity team",
-      "meta": {}
+      "meta": {},
+      "displayName": "Security Guard"
     },
     {
       "id": "security-guard/hook/secret-scan",
@@ -781,8 +957,9 @@
       "path": "plugins/security-guard/hooks/hooks.json",
       "body": "",
       "meta": {
-        "event": "PreToolUse · Write, Edit"
-      }
+        "event": "PreToolUse \u00b7 Write, Edit"
+      },
+      "displayName": "PreToolUse \u00b7 Write, Edit"
     },
     {
       "id": "security-guard/hook/block-dangerous-bash",
@@ -798,8 +975,9 @@
       "path": "plugins/security-guard/hooks/hooks.json",
       "body": "",
       "meta": {
-        "event": "PreToolUse · Bash"
-      }
+        "event": "PreToolUse \u00b7 Bash"
+      },
+      "displayName": "PreToolUse \u00b7 Bash"
     },
     {
       "id": "security-guard/skill/dependency-audit",
@@ -815,7 +993,14 @@
       ],
       "path": "plugins/security-guard/skills/dependency-audit/SKILL.md",
       "body": "",
-      "meta": {}
+      "meta": {
+        "tools": [
+          "Read",
+          "Grep",
+          "Edit"
+        ]
+      },
+      "displayName": "Dependency Audit"
     },
     {
       "id": "k8s-helper",
@@ -831,7 +1016,8 @@
       "body": "",
       "meta": {
         "external": true
-      }
+      },
+      "displayName": "K8s Helper"
     }
   ]
 }

@@ -7,9 +7,6 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "node scripts/serve.mjs",
-    "build:catalog": "node scripts/build-catalog.mjs",
-    "test": "node --test scripts/test/*.test.mjs",
     "release": "node scripts/release.mjs",
     "rollback": "node scripts/rollback.mjs"
   }

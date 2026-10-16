@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseFrontmatter } from '../lib/frontmatter.mjs';
+import { parseFrontmatter } from '../scripts/lib/frontmatter.mjs';
 
 test('parses plain, quoted and inline list values', () => {
   const { data, body, error } = parseFrontmatter(

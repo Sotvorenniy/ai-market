@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 // Builds the catalog site data from the marketplace repository.
 //
-//   npm run build:catalog [-- --out dist]
+//   npm run build [-- --out dist]        (run inside catalog/)
 //
-// Writes <out>/data/catalog.json and <out>/data/releases.json and copies site/ into <out> when it exists.
+// Copies src/ into <out> and writes <out>/data/catalog.json, <out>/data/releases.json and <out>/feed.xml.
+// The marketplace itself (.claude-plugin/, plugins/) is read from the repository root.
 // Fails when marketplace.json is unreadable or a relative plugin source is missing. Problems inside a
 // single plugin become warnings; the plugin is still published with what could be read.
-// See docs/specs/catalog-site.md §3–4.
+// See catalog/docs/spec.md §3–4.
 
 import { execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync, appendFileSync } from 'node:fs';
-import { basename, join, relative, resolve, sep } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { appendFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseFrontmatter } from './lib/frontmatter.mjs';
 
 export const SCHEMA_VERSION = 1;
@@ -67,14 +68,19 @@ function readMarkdownComponent(ctx, file, type, fallbackName) {
   const name = nonEmpty(data.name) ?? fallbackName;
   const description = nonEmpty(data.description);
   if (!description) ctx.warn(`${rel}: missing "description" in frontmatter.`);
+  const meta = {};
+  const tools = toTags(data.tools ?? data['allowed-tools']);
+  if (tools.length) meta.tools = tools;
+  if (nonEmpty(data.model)) meta.model = data.model.trim();
   return {
     type,
     name,
+    displayName: nonEmpty(data.displayName) ?? nonEmpty(data['display-name']) ?? nonEmpty(data.title) ?? name,
     description: description ?? '',
     tags: toTags(data.tags),
     path: rel,
     body: trimBody(body),
-    meta: {},
+    meta,
   };
 }
 
@@ -138,6 +144,7 @@ function readMarkdownSet(ctx, plugin, type, folder, manifestValue) {
       const file = pluginPath(ctx, plugin, def?.source);
       if (!file) continue;
       const item = readMarkdownComponent(ctx, file, type, name);
+      if (item.displayName === item.name) item.displayName = name;
       item.name = name;
       if (nonEmpty(def.description)) item.description = def.description.trim();
       items.push(item);
@@ -195,6 +202,7 @@ function readHooks(ctx, plugin) {
         items.push({
           type: 'hook',
           name: matcher ? `${slug(event)}-${slug(matcher)}` : slug(event),
+          displayName: label,
           description: nonEmpty(group?.description) ?? nonEmpty(data.description) ?? `Runs on ${label}.`,
           tags: [],
           path,
@@ -219,6 +227,7 @@ function readMcpServers(ctx, plugin) {
       items.push({
         type: 'mcp',
         name,
+        displayName: name,
         description: nonEmpty(server.description) ?? `MCP server "${name}" (${transport}).`,
         tags: [],
         path,
@@ -232,6 +241,13 @@ function readMcpServers(ctx, plugin) {
 }
 
 /* ---------- plugins ---------- */
+
+function toDependencies(value) {
+  return asArray(value)
+    .map((dep) => (typeof dep === 'string' ? dep : nonEmpty(dep?.name) && (dep.marketplace ? `${dep.name}@${dep.marketplace}` : dep.name)))
+    .filter((dep) => typeof dep === 'string' && dep.trim())
+    .map((dep) => dep.trim());
+}
 
 function externalSourceUrl(source) {
   switch (source?.source) {
@@ -270,6 +286,7 @@ function buildPlugin(ctx, marketplace, entry) {
         path: null,
         external: true,
         sourceUrl,
+        dependencies: toDependencies(entry.dependencies),
         items: [],
       },
       components: [],
@@ -320,6 +337,7 @@ function buildPlugin(ctx, marketplace, entry) {
       path: rel,
       external: false,
       sourceUrl: null,
+      dependencies: toDependencies(manifest.dependencies ?? entry.dependencies),
       items: [],
     },
     components,
@@ -413,6 +431,7 @@ export function buildCatalog({ root, repo = null, now = new Date() }) {
       id: plugin.name,
       type: 'plugin',
       name: plugin.name,
+      displayName: plugin.displayName,
       plugin: plugin.name,
       description: plugin.description,
       tags: plugin.tags,
@@ -450,25 +469,66 @@ export function buildCatalog({ root, repo = null, now = new Date() }) {
   return { catalog, releases: buildReleases(ctx.root, plugins), warnings };
 }
 
+/* ---------- feed ---------- */
+
+const xml = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
+
+/** Site URL on GitHub Pages: https://<owner>.github.io/<repo>/ */
+export function pagesUrl(repo) {
+  const [owner, name] = (repo ?? '').split('/');
+  return owner && name ? `https://${owner.toLowerCase()}.github.io/${name}/` : null;
+}
+
+/** Atom feed of plugin releases for "Subscribe" on the What's new page. */
+export function buildFeed(releases, { title, siteUrl, now = new Date() }) {
+  const base = siteUrl ?? '';
+  const entries = releases.slice(0, 50).map((r) => {
+    const link = `${base}#/plugin/${encodeURIComponent(r.plugin)}`;
+    const kind = r.kind === 'rollback' ? ' (rollback)' : r.kind === 'major' ? ' (breaking)' : '';
+    return `  <entry>
+    <title>${xml(`${r.plugin} v${r.version}${kind}`)}</title>
+    <id>${xml(`${base}#release/${r.plugin}/${r.version}`)}</id>
+    <link href="${xml(link)}"/>
+    <updated>${xml(r.date)}T00:00:00Z</updated>
+    <summary>${xml(r.notes.join(' · ') || 'No release notes.')}</summary>
+  </entry>`;
+  });
+  return `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>${xml(title)}</title>
+  <id>${xml(base || title)}</id>
+  <link href="${xml(base)}"/>
+  <link rel="self" href="${xml(`${base}feed.xml`)}"/>
+  <updated>${(releases[0]?.date ? `${releases[0].date}T00:00:00Z` : now.toISOString())}</updated>
+${entries.join('\n')}
+</feed>
+`;
+}
+
 /* ---------- CLI ---------- */
+
+const CATALOG_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 function main(argv) {
   const outIndex = argv.indexOf('--out');
-  const root = git(process.cwd(), ['rev-parse', '--show-toplevel']) ?? process.cwd();
-  const out = resolve(root, outIndex === -1 ? 'dist' : argv[outIndex + 1] ?? 'dist');
+  const out = resolve(CATALOG_DIR, outIndex === -1 ? 'dist' : argv[outIndex + 1] ?? 'dist');
+  const root = git(CATALOG_DIR, ['rev-parse', '--show-toplevel']) ?? resolve(CATALOG_DIR, '..');
   const repo = process.env.GITHUB_REPOSITORY || repoFromRemote(git(root, ['remote', 'get-url', 'origin']));
+  const siteUrl = process.env.SITE_URL || pagesUrl(repo);
 
   const { catalog, releases, warnings } = buildCatalog({ root, repo });
   if (!repo) warnings.push('Repository slug unknown: set GITHUB_REPOSITORY or add an "origin" remote on GitHub.');
 
+  rmSync(out, { recursive: true, force: true });
+  cpSync(join(CATALOG_DIR, 'src'), out, { recursive: true });
   mkdirSync(join(out, 'data'), { recursive: true });
-  const siteDir = join(root, 'site');
-  if (isDir(siteDir)) cpSync(siteDir, out, { recursive: true });
   writeFileSync(join(out, 'data', 'catalog.json'), `${JSON.stringify(catalog)}\n`);
   writeFileSync(join(out, 'data', 'releases.json'), `${JSON.stringify(releases)}\n`);
+  writeFileSync(join(out, 'feed.xml'), buildFeed(releases, { title: `${catalog.marketplace.name} releases`, siteUrl }));
+  writeFileSync(join(out, '.nojekyll'), '');
 
   const size = statSync(join(out, 'data', 'catalog.json')).size;
-  console.log(`✔ ${catalog.plugins.length} plugins, ${catalog.items.length} items, ${releases.length} releases → ${toPosix(relative(root, out))}/data (catalog ${(size / 1024).toFixed(1)} KB)`);
+  console.log(`✔ ${catalog.plugins.length} plugins, ${catalog.items.length} items, ${releases.length} releases → ${toPosix(relative(process.cwd(), out)) || '.'} (catalog ${(size / 1024).toFixed(1)} KB)`);
   if (size > 1024 * 1024) warnings.push(`catalog.json is ${(size / 1024 / 1024).toFixed(2)} MB, above the 1 MB budget.`);
   for (const warning of warnings) console.warn(`! ${warning}`);
   if (process.env.GITHUB_STEP_SUMMARY && warnings.length) {

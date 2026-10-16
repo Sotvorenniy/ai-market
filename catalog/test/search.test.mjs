@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   createIndex, editDistance, escapeHtml, highlight, parseQuery, prepareConfig, search, stem, termMatch, tokens, words,
-} from '../../site/search.js';
+} from '../src/search.js';
 
 const load = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
-const config = prepareConfig(load('../../site/search-config.json'));
+const config = prepareConfig(load('../src/search-config.json'));
 const sample = load('./fixtures/sample-items.json');
 const golden = load('./fixtures/search-golden.json');
 const index = createIndex(sample, config);
