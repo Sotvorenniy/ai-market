@@ -4,6 +4,10 @@ All notable changes to `research-tools` are recorded here. The format follows [K
 
 ## [Unreleased]
 
+### Changed
+
+- First stable release. From 1.0.0 on, removing or renaming a component needs a major version.
+
 ## [0.1.1] - 2026-10-16
 
 ### Added

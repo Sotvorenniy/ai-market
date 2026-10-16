@@ -71,6 +71,7 @@ claude plugin validate . --strict                 # the catalog
 claude plugin validate plugins/<name> --strict    # each plugin you changed
 bash tests/sdd-guards.test.sh                     # guard hooks
 npm test                                          # catalog website
+npm run install-check                             # every plugin installs and its dependencies resolve
 ```
 
 To try a plugin before it is merged, add your local checkout as a marketplace:
