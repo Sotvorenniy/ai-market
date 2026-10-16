@@ -1,9 +1,9 @@
 # Spec: SDD Engineering and its dependency plugins
 
-Status: draft · Source: `~/WebstormProjects/dev-digest/.claude/` (agents, skills, hooks) · Release plan: team slides
+Status: implemented in the first plugins PR · Source: `~/WebstormProjects/dev-digest/.claude/` (agents, skills, hooks) · Release plan: team slides
 "Steps 2–7" (component selection, dependency graph, packaging, registration, validation, 1.0.0 release).
 
-Items marked **(decide)** need a team decision; the default is what gets built if nobody objects.
+Decisions taken with the team are marked "(agreed)".
 
 ## 1. Goal
 
@@ -16,7 +16,7 @@ packages, its MCP server or its repository.
 
 | Plugin | Role | Components | Depends on |
 |---|---|---|---|
-| `engineering-paved-path` | Reusable knowledge | Skills: `react-best-practices`, `next-best-practices`, `fastify-best-practices`, `onion-architecture`, `frontend-ui-architecture`, `react-testing-library`, `security`, `ux-review`, `zod`, `typescript-expert`, `drizzle-orm-patterns`, `postgresql-table-design` | — |
+| `engineering-paved-path` | Reusable knowledge | Skills: `react-best-practices`, `fastify-best-practices`, `onion-architecture`, `frontend-ui-architecture`, `react-testing-library`, `security`, `ux-review`, `zod`, `drizzle-orm-patterns`, `postgresql-table-design` (see §6 for the two skills left out) | — |
 | `research-tools` | Reusable agent | Agent: `researcher` (read-only) | — |
 | `architecture-review` | Reusable agent | Agent: `architecture-reviewer` (read-only, generalized) | `engineering-paved-path` `^1.0.0` |
 | `sdd-engineering` | Workflow | Agents: `spec-creator`, `implementation-planner`, `implementer`, `plan-verifier`<br>Skills: `run-plan`, `workflow-retro`, `spec-writing`, `engineering-insights`, `mermaid-diagram`<br>Hooks: path and Bash guards for its agents<br>Evals | `engineering-paved-path`, `research-tools`, `architecture-review`, all `^1.0.0` |
@@ -28,10 +28,10 @@ Where a skill goes:
 - Skills only the SDD agents use (`spec-writing`, `engineering-insights`, `mermaid-diagram`, `run-plan`,
   `workflow-retro`) → `sdd-engineering`. If a second plugin ever needs one, it moves to a shared plugin
   in a minor release; it is never copied.
-- `ux-review`, `zod`, `typescript-expert`, `drizzle-orm-patterns`, `postgresql-table-design` are not on
-  the slide's list but the SDD agents route to them, so they ship in `engineering-paved-path`. **(decide)**
+- `ux-review`, `zod`, `drizzle-orm-patterns`, `postgresql-table-design` are not on the slide's list but
+  the SDD agents route to them, so they ship in `engineering-paved-path` (agreed).
 
-Not carried over (slide "Не переносимо", plus what the source shows):
+Not carried over (the slide "Do not carry over" list, plus what the source shows):
 
 - Product specs and plans (`.claude/plans/**`, `specs/**`), secrets, `settings.local.json`, caches
   (`.devdigest/cache/**`), `scheduled_tasks.lock`.
@@ -40,7 +40,7 @@ Not carried over (slide "Не переносимо", plus what the source shows)
   the `pnpm` workaround, `drizzle-kit` and Docker test lanes, the `devdigest` MCP tools.
 - `scripts/check-changed.sh` (hard-codes the project's packages and package manager).
 - Agents not in this release: `security-reviewer`, `test-writer`, `doc-writer`, `brainstorm`; skill
-  `pr-self-review`. **(decide: later plugins or never)**
+  `pr-self-review`. They become separate plugins later (agreed).
 
 ## 3. Dependency graph
 
@@ -85,7 +85,7 @@ graph LR
 | `.claude/scripts/check-changed.sh` | "the project's verification commands" (typecheck, related tests, lint). The planner records them in plan §5; the implementer and plan-verifier run exactly those |
 | `node .claude/skills/<skill>/scripts/...` | `${CLAUDE_SKILL_DIR}/scripts/...` inside the skill (slide 4) |
 | Reading another skill as `.claude/skills/<name>/SKILL.md` | Loading it through the plugin namespace with the Skill tool: `engineering-paved-path:react-best-practices` (slide 4). Agents that load skills get `Skill` in their `tools` |
-| `security-reviewer` in the review loop, review bundle from `pr-self-review` | `run-plan` reviews with `architecture-review:architecture-reviewer` only; the orchestrator passes the changed-file list and `git diff` instead of a bundle. A security reviewer joins the loop when that plugin exists **(decide)** |
+| `security-reviewer` in the review loop, review bundle from `pr-self-review` | `run-plan` reviews with `architecture-review:architecture-reviewer` only; the orchestrator passes the changed-file list and `git diff` instead of a bundle. A security reviewer joins the loop when that plugin exists |
 | `test-writer`, `doc-writer`, `/pr-self-review` stages in `run-plan` | Removed from the stages. `--with-tests` makes the main session write the plan's test items |
 | `devdigest` MCP tools in `spec-creator` | Removed. Live-system facts come from researcher reports |
 | Hooks wired in agent frontmatter with `${CLAUDE_PROJECT_DIR}/.claude/hooks/*.sh` | Plugin hooks in `hooks/hooks.json`, scripts in `scripts/`, called as `"${CLAUDE_PLUGIN_ROOT}"/scripts/<guard>.sh` (see §6, risk 1) |
@@ -114,23 +114,35 @@ plugins/<name>/
 - Version lives only in `plugin.json` (the slide lists it next to name, owner and source; the
   marketplace entry carries name, source, description, category and tags).
 
-## 6. Risks to settle first (implementation step 1)
+## 6. Verified behaviour (probe, Claude Code 2.1.301)
 
-1. **Agent-scoped guards.** Plugin agents may not support `hooks` in their frontmatter. Probe: a plugin
-   with an agent that declares a hook, loaded with `--plugin-dir`. If unsupported, the guards move to
-   `hooks/hooks.json` and each script acts only when the hook input names the guarded agent
-   (`agent_type`). If the input does not carry it, the write guards cannot be scoped; then the agents'
-   `tools` lists stay the hard limit and the guards are documented as advisory **(decide on fallback)**.
-2. **Namespaced skills from a dependency.** Confirm that a `sdd-engineering` agent can load
-   `engineering-paved-path:<skill>` through the Skill tool when both plugins are installed.
-3. **`${user_config.*}` in agent files.** If it is substituted only in skills, agents read the paths
-   from the skill they load or from the explicit input.
-4. **Dependency resolution.** `^1.0.0` ranges resolve against tags `<plugin>--v<version>`, which the
-   release script already creates. Until the first tags exist, validate locally with `--plugin-dir`.
+A throw-away plugin was loaded with `--plugin-dir` and driven through `claude -p`:
+
+1. **Agent frontmatter hooks do not run for plugin agents.** A `hooks:` block in a plugin agent's
+   frontmatter never fired. Plugin-level hooks in `hooks/hooks.json` do fire for a plugin agent's tool
+   calls, and their input carries `agent_type` (for example `"probe:prober"`) and `agent_id`. The guards
+   are therefore plugin hooks that act only when `agent_type` names their agent.
+2. **Namespaced skills from another plugin work.** An agent with the `Skill` tool loaded
+   `probedep:paved-rule` from a second plugin and received its content.
+3. **`${CLAUDE_SKILL_DIR}` is substituted** in skill content (absolute path of the skill folder).
+4. **`${user_config.*}` was not substituted** in agent content. Paths are explicit inputs with
+   defaults instead; the guard hooks read `SDD_PLANS_DIR` from the environment when a project uses a
+   different plans folder.
+5. **Dependencies:** `claude plugin validate --strict` accepts `dependencies` with `^1.0.0` ranges
+   before the dependency tags exist. Install-time resolution is checked after the 1.0.0 tags.
+
+### Licensing decisions
+
+- `next-best-practices` (from `vercel-labs/next-skills`, which has no license and now points users to
+  the docs bundled with Next.js) and `typescript-expert` (from a repository that no longer exists, so
+  its license cannot be checked) are **not** published. The slide's "Next.js" item is covered by
+  `frontend-ui-architecture` and `react-best-practices` until a licensed source or a first-party
+  rewrite exists.
+- The four MIT skills keep their notices in `engineering-paved-path/THIRD_PARTY_NOTICES.md`.
 
 ## 7. Implementation steps
 
-1. Probe the four risks above with a throw-away plugin; record the results in this spec.
+1. Probe the plugin behaviour with a throw-away plugin (done, §6).
 2. `engineering-paved-path`: copy the skills, remove `this-repo.md` and project examples, generalize
    wording, add `THIRD_PARTY_NOTICES.md`, README, CHANGELOG.
 3. `research-tools` and `architecture-review`: generalize the agents; the reviewer loads

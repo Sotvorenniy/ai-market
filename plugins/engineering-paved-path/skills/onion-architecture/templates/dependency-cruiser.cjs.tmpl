@@ -1,0 +1,76 @@
+// .dependency-cruiser.cjs — starter config that encodes the onion rings.
+// Copy to the backend package root as .dependency-cruiser.cjs and adjust the path regexes if
+// the project does not use the reference layout (src/modules/<m>/, src/ports, src/adapters,
+// src/db, src/platform/container.ts).
+//
+// Existing code that breaks the rules: freeze it in a baseline, then only new violations fail:
+//   npx depcruise src --config .dependency-cruiser.cjs --output-type baseline > .dependency-cruiser-known-violations.json
+//   npx depcruise src --config .dependency-cruiser.cjs --ignore-known --output-type err
+
+const CORE = '^src/(modules/[^/]+/(domain|ports)\\.ts$|ports/)';
+const SERVICE = '^src/modules/[^/]+/service\\.ts$';
+const ROUTES = '^src/modules/[^/]+/routes\\.ts$';
+const REPOSITORY = '/repository(\\.ts$|/)|\\.repo\\.ts$';
+const DB_LIBS = 'node_modules/(drizzle-orm|postgres|pg)/';
+const INFRA = `^src/(db|adapters)/|^src/platform/container|${DB_LIBS}`;
+
+/** @type {import('dependency-cruiser').IConfiguration} */
+module.exports = {
+  forbidden: [
+    {
+      name: 'core-is-pure',
+      severity: 'error',
+      comment: 'domain.ts / ports.ts / src/ports know nothing about frameworks, the db, SDKs or the container.',
+      from: { path: CORE },
+      to: { path: `${INFRA}|node_modules/fastify/|${REPOSITORY}` },
+    },
+    {
+      name: 'core-zod-type-only',
+      severity: 'error',
+      comment: 'The core may use `import type` from zod (z.infer), never runtime zod. Parse at the boundary.',
+      from: { path: CORE },
+      to: { path: 'node_modules/zod/', dependencyTypesNot: ['type-only'] },
+    },
+    {
+      name: 'application-no-infrastructure',
+      severity: 'error',
+      comment: 'Services depend on ports, not on drizzle, src/db, adapters, repositories or the Container.',
+      from: { path: SERVICE },
+      to: { path: `${INFRA}|${REPOSITORY}` },
+    },
+    {
+      name: 'routes-no-data-access',
+      severity: 'error',
+      comment: 'Routes parse, call a service and shape the reply. No queries, repositories or adapters.',
+      from: { path: ROUTES },
+      to: { path: `^src/(db|adapters)/|${DB_LIBS}|${REPOSITORY}` },
+    },
+    {
+      name: 'no-cross-module-internals',
+      severity: 'error',
+      comment: "Use another module's ports.ts / domain.ts / types.ts or a Container getter, never its service or repository.",
+      from: { path: '^src/modules/([^/]+)/' },
+      to: { path: '^src/modules/[^/]+/(service|repository)', pathNot: '^src/modules/$1/' },
+    },
+    {
+      name: 'adapters-not-inward-of-modules',
+      severity: 'error',
+      comment: 'Adapters implement ports; they never import module code.',
+      from: { path: '^src/adapters/' },
+      to: { path: '^src/modules/' },
+    },
+    {
+      name: 'no-circular',
+      severity: 'warn',
+      from: {},
+      to: { circular: true },
+    },
+  ],
+  options: {
+    doNotFollow: { path: 'node_modules' },
+    // Makes `import type` visible, which core-zod-type-only relies on.
+    tsPreCompilationDeps: true,
+    tsConfig: { fileName: 'tsconfig.json' },
+    exclude: { path: '\\.test\\.ts$' },
+  },
+};

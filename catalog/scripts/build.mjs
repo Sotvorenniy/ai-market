@@ -57,6 +57,27 @@ export function trimBody(body, limit = BODY_LIMIT) {
   return `${(lastBreak > limit * 0.8 ? cut.slice(0, lastBreak) : cut).trimEnd()}\n\n…`;
 }
 
+/** Splits a tools list ("Read, Agent(a, b)") on commas outside parentheses. */
+export function toTools(value) {
+  if (Array.isArray(value)) return value.map(String).map((t) => t.trim()).filter(Boolean);
+  if (typeof value !== 'string') return [];
+  const tools = [];
+  let depth = 0;
+  let current = '';
+  for (const char of value) {
+    if (char === '(') depth++;
+    if (char === ')') depth = Math.max(0, depth - 1);
+    if (char === ',' && depth === 0) {
+      tools.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  tools.push(current);
+  return tools.map((t) => t.trim()).filter(Boolean);
+}
+
 const slug = (value) => String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'all';
 
 /* ---------- component readers ---------- */
@@ -69,7 +90,7 @@ function readMarkdownComponent(ctx, file, type, fallbackName) {
   const description = nonEmpty(data.description);
   if (!description) ctx.warn(`${rel}: missing "description" in frontmatter.`);
   const meta = {};
-  const tools = toTags(data.tools ?? data['allowed-tools']);
+  const tools = toTools(data.tools ?? data['allowed-tools']);
   if (tools.length) meta.tools = tools;
   if (nonEmpty(data.model)) meta.model = data.model.trim();
   return {

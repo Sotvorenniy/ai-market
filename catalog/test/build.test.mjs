@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import {
-  BODY_LIMIT, BuildError, buildCatalog, buildFeed, changelogNotes, pagesUrl, repoFromRemote, trimBody,
+  BODY_LIMIT, BuildError, buildCatalog, buildFeed, changelogNotes, pagesUrl, repoFromRemote, toTools, trimBody,
 } from '../scripts/build.mjs';
 
 const NOW = new Date('2026-10-16T12:00:00Z');
@@ -318,6 +318,12 @@ test('trimBody caps long bodies', () => {
   assert.ok(trimmed.length <= BODY_LIMIT + 3);
   assert.ok(trimmed.endsWith('…'));
   assert.equal(trimBody('  short  '), 'short');
+});
+
+test('toTools keeps commas inside parentheses', () => {
+  assert.deepEqual(toTools('Read, Grep, Agent(research-tools:researcher, Explore), Bash'), ['Read', 'Grep', 'Agent(research-tools:researcher, Explore)', 'Bash']);
+  assert.deepEqual(toTools(['Read', ' Edit ']), ['Read', 'Edit']);
+  assert.deepEqual(toTools(undefined), []);
 });
 
 test('pagesUrl derives the GitHub Pages address', () => {

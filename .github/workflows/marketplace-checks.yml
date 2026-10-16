@@ -29,10 +29,19 @@ jobs:
           node-version: 22
       - name: Install Claude Code CLI
         run: npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: English only
+        run: |
+          # Every file in the repository is in English (docs, code, comments, data).
+          if git grep -nIP '[\x{0400}-\x{04FF}]' -- . ; then
+            echo "::error::Non-English (Cyrillic) text found in the lines above."
+            exit 1
+          fi
+      - name: Guard hook tests
+        run: bash tests/sdd-guards.test.sh
       - name: No project-specific references in plugins
         run: |
           # Published plugins must stay project-independent (docs/specs/plugins.md §4).
-          if [ -d plugins ] && grep -rnIiE 'dev-?digest|\.devdigest|reviewer-core|server/clones|/Users/|burnjohn' plugins; then
+          if [ -d plugins ] && { grep -rnIiE 'dev-?digest|\.devdigest|reviewer-core|server/clones|burnjohn' plugins || grep -rnIE '/Users/|/home/[a-z]' plugins; }; then
             echo "::error::Plugins contain project-specific references (see the lines above)."
             exit 1
           fi
