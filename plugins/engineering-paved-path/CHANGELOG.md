@@ -4,6 +4,8 @@ All notable changes to `engineering-paved-path` are recorded here. The format fo
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-16
+
 ### Added
 
 - Skills: react-best-practices, frontend-ui-architecture, react-testing-library, ux-review, fastify-best-practices, onion-architecture, drizzle-orm-patterns, postgresql-table-design, zod, security.
