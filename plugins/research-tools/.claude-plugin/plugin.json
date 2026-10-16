@@ -1,6 +1,6 @@
 {
   "name": "research-tools",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read-only researcher agent that answers questions about the current repository or external sources with path:line and URL evidence.",
   "author": {
     "name": "sotvorenniy"

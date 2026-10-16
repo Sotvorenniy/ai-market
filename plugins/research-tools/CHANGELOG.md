@@ -4,6 +4,8 @@ All notable changes to `research-tools` are recorded here. The format follows [K
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-16
+
 ### Added
 
 - `researcher` agent: read-only repository and external research with path:line and URL evidence.
