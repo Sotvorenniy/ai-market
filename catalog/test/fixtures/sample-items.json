@@ -1,0 +1,474 @@
+[
+  {
+    "id": "code-review",
+    "type": "plugin",
+    "name": "code-review",
+    "plugin": "code-review",
+    "description": "Reviews pull requests against our engineering checklist and flags risky changes before merge.",
+    "tags": [
+      "review",
+      "pull-request",
+      "quality"
+    ],
+    "body": ""
+  },
+  {
+    "id": "code-review/skill/review-pr",
+    "type": "skill",
+    "name": "review-pr",
+    "plugin": "code-review",
+    "description": "Reviews the current branch or a pull request diff against the team checklist: naming, tests, error handling and migration safety. Use when the user asks for a code review or PR review.",
+    "tags": [
+      "review",
+      "pull-request",
+      "diff"
+    ],
+    "body": "## When to use\n- Before opening a pull request\n- When a reviewer asks for a second opinion\n\n## Steps\n1. Collect the diff with `scripts/collect_diff.sh`\n2. Check every file against `reference/checklist.md`\n3. Report findings grouped by severity: blocking, should fix, nit\n\n```bash\ngit diff origin/main...HEAD --stat\n```"
+  },
+  {
+    "id": "code-review/skill/security-review",
+    "type": "skill",
+    "name": "security-review",
+    "plugin": "code-review",
+    "description": "Checks a diff for injection risks, leaked secrets, unsafe deserialization and missing authorization checks. Use when changes touch auth, input handling or infrastructure.",
+    "tags": [
+      "security",
+      "review",
+      "secrets"
+    ],
+    "body": ""
+  },
+  {
+    "id": "code-review/agent/code-reviewer",
+    "type": "agent",
+    "name": "code-reviewer",
+    "plugin": "code-review",
+    "description": "A read-only reviewer subagent that inspects changed files in parallel and returns a prioritized list of findings with file and line references.",
+    "tags": [
+      "review",
+      "subagent"
+    ],
+    "body": ""
+  },
+  {
+    "id": "code-review/command/review",
+    "type": "command",
+    "name": "review",
+    "plugin": "code-review",
+    "description": "Runs the full review on the current branch and posts a summary you can paste into the pull request.",
+    "tags": [
+      "review",
+      "pull-request"
+    ],
+    "body": ""
+  },
+  {
+    "id": "test-writer",
+    "type": "plugin",
+    "name": "test-writer",
+    "plugin": "test-writer",
+    "description": "Writes and repairs unit and end-to-end tests that follow the conventions of each repository.",
+    "tags": [
+      "testing",
+      "unit-tests",
+      "playwright"
+    ],
+    "body": ""
+  },
+  {
+    "id": "test-writer/skill/write-unit-tests",
+    "type": "skill",
+    "name": "write-unit-tests",
+    "plugin": "test-writer",
+    "description": "Writes unit tests for a function, module or diff using the test framework already in the repository. Use when the user asks for tests or coverage.",
+    "tags": [
+      "testing",
+      "unit",
+      "jest",
+      "vitest"
+    ],
+    "body": "## When to use\n- New code without tests\n- A bug fix that needs a regression test\n\n## Rules\n- Detect the framework from `package.json` before writing anything\n- One behaviour per test, named after the behaviour\n- Never mock the module under test"
+  },
+  {
+    "id": "test-writer/skill/e2e-playwright",
+    "type": "skill",
+    "name": "e2e-playwright",
+    "plugin": "test-writer",
+    "description": "Creates Playwright end-to-end tests for a user flow, with stable selectors and fixtures. Use when the user describes a flow to cover in the browser.",
+    "tags": [
+      "testing",
+      "e2e",
+      "playwright",
+      "browser"
+    ],
+    "body": ""
+  },
+  {
+    "id": "test-writer/agent/test-engineer",
+    "type": "agent",
+    "name": "test-engineer",
+    "plugin": "test-writer",
+    "description": "Investigates failing or flaky tests, finds the root cause and proposes the smallest fix.",
+    "tags": [
+      "testing",
+      "subagent",
+      "flaky"
+    ],
+    "body": ""
+  },
+  {
+    "id": "release-notes",
+    "type": "plugin",
+    "name": "release-notes",
+    "plugin": "release-notes",
+    "description": "Turns merged pull requests and commits into readable changelogs and release notes.",
+    "tags": [
+      "release",
+      "changelog",
+      "git"
+    ],
+    "body": ""
+  },
+  {
+    "id": "release-notes/skill/changelog-writer",
+    "type": "skill",
+    "name": "changelog-writer",
+    "plugin": "release-notes",
+    "description": "Groups commits since the last tag into Added, Changed and Fixed, and suggests the next semver bump. Use when preparing a release.",
+    "tags": [
+      "changelog",
+      "release",
+      "semver"
+    ],
+    "body": ""
+  },
+  {
+    "id": "release-notes/command/release-notes",
+    "type": "command",
+    "name": "release-notes",
+    "plugin": "release-notes",
+    "description": "Drafts user-facing release notes for a version range in plain language.",
+    "tags": [
+      "release",
+      "notes"
+    ],
+    "body": ""
+  },
+  {
+    "id": "release-notes/hook/changelog-reminder",
+    "type": "hook",
+    "name": "changelog-reminder",
+    "plugin": "release-notes",
+    "description": "Warns before a push when source files changed but CHANGELOG.md did not.",
+    "tags": [
+      "changelog",
+      "git",
+      "push"
+    ],
+    "body": ""
+  },
+  {
+    "id": "docs-kit",
+    "type": "plugin",
+    "name": "docs-kit",
+    "plugin": "docs-kit",
+    "description": "Writes API docs, architecture decision records and onboarding guides in our documentation style.",
+    "tags": [
+      "documentation",
+      "docs",
+      "adr"
+    ],
+    "body": ""
+  },
+  {
+    "id": "docs-kit/skill/api-docs",
+    "type": "skill",
+    "name": "api-docs",
+    "plugin": "docs-kit",
+    "description": "Generates reference documentation from code or an OpenAPI file, with request and response examples. Use when an endpoint or SDK method lacks docs.",
+    "tags": [
+      "documentation",
+      "api",
+      "openapi"
+    ],
+    "body": ""
+  },
+  {
+    "id": "docs-kit/skill/adr-writer",
+    "type": "skill",
+    "name": "adr-writer",
+    "plugin": "docs-kit",
+    "description": "Writes an architecture decision record with context, options considered, decision and consequences. Use after a technical decision is made.",
+    "tags": [
+      "adr",
+      "architecture",
+      "decision"
+    ],
+    "body": ""
+  },
+  {
+    "id": "docs-kit/agent/tech-writer",
+    "type": "agent",
+    "name": "tech-writer",
+    "plugin": "docs-kit",
+    "description": "Edits existing documentation for clarity, structure and consistent terminology.",
+    "tags": [
+      "documentation",
+      "editing",
+      "subagent"
+    ],
+    "body": ""
+  },
+  {
+    "id": "jira-sync",
+    "type": "plugin",
+    "name": "jira-sync",
+    "plugin": "jira-sync",
+    "description": "Connects Claude Code to Jira so it can read tickets, create issues from diffs and update status.",
+    "tags": [
+      "jira",
+      "tickets",
+      "planning"
+    ],
+    "body": ""
+  },
+  {
+    "id": "jira-sync/mcp/jira",
+    "type": "mcp",
+    "name": "jira",
+    "plugin": "jira-sync",
+    "description": "MCP server for Jira: search issues, read ticket details, create issues and move them between statuses.",
+    "tags": [
+      "jira",
+      "tickets",
+      "mcp",
+      "issue"
+    ],
+    "body": ""
+  },
+  {
+    "id": "jira-sync/skill/ticket-from-diff",
+    "type": "skill",
+    "name": "ticket-from-diff",
+    "plugin": "jira-sync",
+    "description": "Creates a well-formed Jira ticket from the current changes, with acceptance criteria and a testing note.",
+    "tags": [
+      "jira",
+      "ticket",
+      "diff"
+    ],
+    "body": ""
+  },
+  {
+    "id": "jira-sync/command/ticket",
+    "type": "command",
+    "name": "ticket",
+    "plugin": "jira-sync",
+    "description": "Shows the Jira ticket linked to the current branch and its acceptance criteria.",
+    "tags": [
+      "jira",
+      "ticket"
+    ],
+    "body": ""
+  },
+  {
+    "id": "figma-to-code",
+    "type": "plugin",
+    "name": "figma-to-code",
+    "plugin": "figma-to-code",
+    "description": "Implements Figma frames as components that use our design system tokens.",
+    "tags": [
+      "figma",
+      "ui",
+      "components"
+    ],
+    "body": ""
+  },
+  {
+    "id": "figma-to-code/skill/implement-frame",
+    "type": "skill",
+    "name": "implement-frame",
+    "plugin": "figma-to-code",
+    "description": "Builds a component from a Figma frame link, mapping colors and spacing to design tokens. Use when the user shares a Figma URL to implement.",
+    "tags": [
+      "figma",
+      "ui",
+      "react",
+      "design"
+    ],
+    "body": ""
+  },
+  {
+    "id": "figma-to-code/agent/ui-builder",
+    "type": "agent",
+    "name": "ui-builder",
+    "plugin": "figma-to-code",
+    "description": "Builds and refines UI components, then checks them against the design screenshot.",
+    "tags": [
+      "ui",
+      "components",
+      "subagent"
+    ],
+    "body": ""
+  },
+  {
+    "id": "seo-content",
+    "type": "plugin",
+    "name": "seo-content",
+    "plugin": "seo-content",
+    "description": "Helps editors and developers ship search-friendly articles: audits, headlines and structured data.",
+    "tags": [
+      "seo",
+      "articles",
+      "headlines"
+    ],
+    "body": ""
+  },
+  {
+    "id": "seo-content/skill/seo-audit",
+    "type": "skill",
+    "name": "seo-audit",
+    "plugin": "seo-content",
+    "description": "Audits an article page for title length, meta description, headings, internal links and structured data. Use before publishing or when traffic drops.",
+    "tags": [
+      "seo",
+      "audit",
+      "metadata",
+      "articles"
+    ],
+    "body": ""
+  },
+  {
+    "id": "seo-content/skill/headline-variants",
+    "type": "skill",
+    "name": "headline-variants",
+    "plugin": "seo-content",
+    "description": "Suggests headline and teaser variants for an article, each within character limits for search and social.",
+    "tags": [
+      "headlines",
+      "articles",
+      "seo"
+    ],
+    "body": ""
+  },
+  {
+    "id": "seo-content/agent/copy-editor",
+    "type": "agent",
+    "name": "copy-editor",
+    "plugin": "seo-content",
+    "description": "Edits article copy against the house style guide and flags factual claims that need a source.",
+    "tags": [
+      "editing",
+      "articles",
+      "style-guide"
+    ],
+    "body": ""
+  },
+  {
+    "id": "db-helper",
+    "type": "plugin",
+    "name": "db-helper",
+    "plugin": "db-helper",
+    "description": "Reviews SQL, plans safe migrations and lets Claude query a read-only Postgres replica.",
+    "tags": [
+      "database",
+      "sql",
+      "migrations"
+    ],
+    "body": ""
+  },
+  {
+    "id": "db-helper/skill/sql-review",
+    "type": "skill",
+    "name": "sql-review",
+    "plugin": "db-helper",
+    "description": "Reviews SQL queries for missing indexes, N+1 patterns and locking risks. Use when a query is slow or a pull request changes SQL.",
+    "tags": [
+      "sql",
+      "performance",
+      "review",
+      "database"
+    ],
+    "body": ""
+  },
+  {
+    "id": "db-helper/skill/migration-planner",
+    "type": "skill",
+    "name": "migration-planner",
+    "plugin": "db-helper",
+    "description": "Plans a zero-downtime schema migration in reversible steps with a rollback for each step.",
+    "tags": [
+      "migrations",
+      "database",
+      "schema"
+    ],
+    "body": ""
+  },
+  {
+    "id": "db-helper/mcp/postgres-readonly",
+    "type": "mcp",
+    "name": "postgres-readonly",
+    "plugin": "db-helper",
+    "description": "MCP server with read-only access to a Postgres replica for schema inspection and query plans.",
+    "tags": [
+      "postgres",
+      "database",
+      "mcp",
+      "sql"
+    ],
+    "body": ""
+  },
+  {
+    "id": "security-guard",
+    "type": "plugin",
+    "name": "security-guard",
+    "plugin": "security-guard",
+    "description": "Guardrails that stop secrets and dangerous shell commands before they run.",
+    "tags": [
+      "security",
+      "secrets",
+      "hooks"
+    ],
+    "body": ""
+  },
+  {
+    "id": "security-guard/hook/secret-scan",
+    "type": "hook",
+    "name": "secret-scan",
+    "plugin": "security-guard",
+    "description": "Blocks writes that contain API keys, private keys or tokens, and tells Claude how to use an environment variable instead.",
+    "tags": [
+      "secrets",
+      "security",
+      "tokens"
+    ],
+    "body": ""
+  },
+  {
+    "id": "security-guard/hook/block-dangerous-bash",
+    "type": "hook",
+    "name": "block-dangerous-bash",
+    "plugin": "security-guard",
+    "description": "Blocks destructive shell commands such as recursive deletes outside the project and force pushes to protected branches.",
+    "tags": [
+      "security",
+      "bash",
+      "shell"
+    ],
+    "body": ""
+  },
+  {
+    "id": "security-guard/skill/dependency-audit",
+    "type": "skill",
+    "name": "dependency-audit",
+    "plugin": "security-guard",
+    "description": "Checks project dependencies for known vulnerabilities and abandoned packages, and proposes safe upgrades.",
+    "tags": [
+      "security",
+      "dependencies",
+      "vulnerability",
+      "npm"
+    ],
+    "body": ""
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "name": "engineering-paved-path",
+  "version": "0.1.0",
+  "description": "Engineering standards as skills: React, Fastify, onion and frontend architecture, React Testing Library, security, UX review, Zod, Drizzle ORM and PostgreSQL table design. Shared by the SDD and review plugins.",
+  "author": {
+    "name": "sotvorenniy"
+  },
+  "homepage": "https://sotvorenniy.github.io/ai-market/#/plugin/engineering-paved-path",
+  "repository": "https://github.com/Sotvorenniy/ai-market",
+  "keywords": [
+    "standards",
+    "react",
+    "fastify",
+    "architecture",
+    "testing",
+    "security",
+    "ux",
+    "zod",
+    "drizzle",
+    "postgresql"
+  ]
+}

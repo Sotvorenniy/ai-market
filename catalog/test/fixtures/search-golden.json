@@ -1,0 +1,19 @@
+[
+  { "query": "I need a skill to review pull requests", "top": "code-review/skill/review-pr" },
+  { "query": "review my PR", "top": ["code-review/skill/review-pr", "code-review"] },
+  { "query": "write unit tests", "top": "test-writer/skill/write-unit-tests" },
+  { "query": "playwright e2e", "top": "test-writer/skill/e2e-playwright" },
+  { "query": "reveiw pull reqests", "top": ["code-review/skill/review-pr", "code-review/command/review"] },
+  { "query": "flaky tests agent", "top": "test-writer/agent/test-engineer" },
+  { "query": "seo for articles", "top": ["seo-content", "seo-content/skill/seo-audit"] },
+  { "query": "headline ideas", "top": "seo-content/skill/headline-variants" },
+  { "query": "safe database migration", "top": ["db-helper/skill/migration-planner", "db-helper"] },
+  { "query": "slow sql query", "top": "db-helper/skill/sql-review" },
+  { "query": "block secrets", "top": "security-guard/hook/secret-scan" },
+  { "query": "jira ticket", "top": ["jira-sync", "jira-sync/mcp/jira"] },
+  { "query": "mcp jira", "top": "jira-sync/mcp/jira" },
+  { "query": "changelog", "top": "release-notes/skill/changelog-writer" },
+  { "query": "architecture decision record", "top": "docs-kit/skill/adr-writer" },
+  { "query": "implement figma design", "top": "figma-to-code/skill/implement-frame" },
+  { "query": "dependency vulnerabilities", "top": "security-guard/skill/dependency-audit" }
+]

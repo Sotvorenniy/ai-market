@@ -4,9 +4,12 @@
   "type": "module",
   "description": "Claude Code plugin marketplace",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
+    "test": "npm --prefix catalog test",
+    "dev": "npm --prefix catalog run dev",
+    "build": "npm --prefix catalog run build",
     "release": "node scripts/release.mjs",
     "rollback": "node scripts/rollback.mjs"
   }

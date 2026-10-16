@@ -1,0 +1,71 @@
+{
+  "fieldWeights": {
+    "name": 5,
+    "tags": 4,
+    "description": 2.5,
+    "plugin": 1.5,
+    "body": 1
+  },
+  "relatedWeight": 0.4,
+  "typeBoost": 1.6,
+  "minScore": 1,
+  "typeWords": {
+    "skill": "skill",
+    "skills": "skill",
+    "agent": "agent",
+    "agents": "agent",
+    "subagent": "agent",
+    "subagents": "agent",
+    "command": "command",
+    "commands": "command",
+    "hook": "hook",
+    "hooks": "hook",
+    "mcp": "mcp",
+    "plugin": "plugin",
+    "plugins": "plugin"
+  },
+  "stopWords": [
+    "a", "about", "all", "an", "and", "any", "are", "be", "can", "could", "do", "does", "find", "for", "from",
+    "get", "give", "have", "help", "helps", "how", "i", "in", "into", "is", "it", "its", "like", "look",
+    "looking", "make", "me", "my", "need", "needs", "of", "on", "or", "our", "please", "should", "some",
+    "something", "that", "the", "there", "thing", "this", "to", "tool", "tools", "use", "using", "want",
+    "wants", "we", "what", "which", "with", "would", "you", "your"
+  ],
+  "synonyms": {
+    "pr": ["pull", "request", "review"],
+    "test": ["testing"],
+    "testing": ["test"],
+    "unit": ["test"],
+    "e2e": ["playwright", "end"],
+    "doc": ["documentation"],
+    "docs": ["documentation"],
+    "documentation": ["doc"],
+    "db": ["database", "sql"],
+    "database": ["sql", "postgres"],
+    "sql": ["database", "query"],
+    "postgres": ["database", "sql"],
+    "secret": ["security", "token"],
+    "security": ["secret", "vulnerability"],
+    "ticket": ["jira", "issue"],
+    "jira": ["ticket"],
+    "seo": ["search", "headline"],
+    "article": ["seo", "headline"],
+    "release": ["changelog", "version"],
+    "changelog": ["release"],
+    "figma": ["design", "ui"],
+    "ui": ["figma", "component"],
+    "design": ["figma", "ui"],
+    "deploy": ["release"],
+    "migration": ["schema", "database"],
+    "bug": ["fix", "flaky"],
+    "slow": ["performance"],
+    "meeting": ["notes"]
+  },
+  "examples": [
+    "I need a skill to review pull requests",
+    "write unit tests",
+    "seo for articles",
+    "safe database migration",
+    "block secrets"
+  ]
+}

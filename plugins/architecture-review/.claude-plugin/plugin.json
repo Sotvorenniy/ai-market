@@ -1,0 +1,23 @@
+{
+  "name": "architecture-review",
+  "version": "0.1.0",
+  "description": "Read-only architecture-reviewer agent that checks a change set against layering, code placement, contract and migration rules from engineering-paved-path.",
+  "author": {
+    "name": "sotvorenniy"
+  },
+  "homepage": "https://sotvorenniy.github.io/ai-market/#/plugin/architecture-review",
+  "repository": "https://github.com/Sotvorenniy/ai-market",
+  "keywords": [
+    "architecture",
+    "review",
+    "agent",
+    "onion-architecture",
+    "read-only"
+  ],
+  "dependencies": [
+    {
+      "name": "engineering-paved-path",
+      "version": "^1.0.0"
+    }
+  ]
+}

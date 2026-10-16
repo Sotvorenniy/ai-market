@@ -1,0 +1,14 @@
+{
+  "name": "ai-market-catalog",
+  "private": true,
+  "type": "module",
+  "description": "GitHub Pages catalog for the ai-market Claude Code marketplace",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}
