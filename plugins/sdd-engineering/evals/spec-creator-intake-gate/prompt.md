@@ -1,4 +1,5 @@
 ---
+plugins: ["../..", "../../../engineering-paved-path", "../../../research-tools", "../../../architecture-review"]
 max_turns: 12
 allowed_tools: [Agent, Read, Glob, Grep]
 ---

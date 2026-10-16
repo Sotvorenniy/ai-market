@@ -70,7 +70,8 @@ its version is released, so merged but unreleased changes do not reach anyone ye
 
 ## Contributing
 
-Want to change a plugin or add a new one? Read [CONTRIBUTING.md](CONTRIBUTING.md).
+Want to change a plugin or add a new one? Read [CONTRIBUTING.md](CONTRIBUTING.md). Found a security
+problem? See [SECURITY.md](SECURITY.md).
 
 ## Repository layout
 

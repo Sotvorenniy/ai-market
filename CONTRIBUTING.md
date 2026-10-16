@@ -83,6 +83,32 @@ To try a plugin before it is merged, add your local checkout as a marketplace:
 
 To see how it looks in the catalog website, run `npm run dev` and open http://localhost:4173.
 
+## Evals
+
+Every plugin has an eval suite in `plugins/<name>/evals/` (`claude plugin eval` format). A change to an
+agent, skill or description needs its evals green; a new behaviour needs a new case. Evals run real
+Claude sessions and cost tokens, so CI does not run them: run them yourself and put the result in the
+pull request.
+
+```bash
+npm run eval -- <name> --runs 1 --max-cost-usd 2 --scaffold --trust-plugin   # quick check
+npm run eval -- <name> --scaffold --trust-plugin                             # 3 runs per case, before a release
+```
+
+Use `npm run eval`, not `claude plugin eval plugins/<name>`: the latter loads only the plugin's own
+folder, so a plugin with dependencies does not load and its cases pass or fail for the wrong reason.
+Each case lists the plugins it needs in `plugins:` (the plugin itself is `../..`).
+
+A suite has three kinds of cases:
+
+- **Behaviour**: the agent or skill does its job on a small fixture (a diff in the prompt, or files
+  written by a `setup.sh` scaffold). Grade the result with an `llm` grader and check that the plugin's
+  own agent ran with `tool_used` + `arm: both`, so an answer from the bare model does not pass.
+- **Negative** (`tags: [negative]`): the plugin stays out of unrelated tasks (`tool_used`, `max: 0`)
+  and does not invent findings or answers it has no evidence for.
+- **Trigger** (`tags: [trigger]`): a skill loads on its own for a task in its area when the prompt
+  does not name it. These guard skill descriptions; rerun them whenever you change one.
+
 ## Pull requests
 
 - Keep one plugin or one topic per pull request.

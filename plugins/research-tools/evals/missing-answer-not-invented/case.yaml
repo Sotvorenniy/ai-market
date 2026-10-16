@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: missing-answer-not-invented
+description: Negative. When the code has no answer, the researcher says so instead of inventing one.
+tags: [negative]
+context:
+  scaffold_script: setup.sh
+plugins: ["../.."]
