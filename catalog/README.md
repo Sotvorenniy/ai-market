@@ -18,8 +18,9 @@ Run inside `catalog/`, or from the repository root with the same names (`npm tes
 
 ## Deployment
 
-`.github/workflows/pages.yml` tests, builds and publishes `dist/` to GitHub Pages on every push to `main`
-and on every release tag (`<plugin>--v<version>`).
+`.github/workflows/catalog-site.yml` runs three jobs: **Test site**, **Build site** and **Deploy to GitHub Pages**
+(on every push to `main` and every release tag `<plugin>--v<version>`; pull requests get test and build only).
+Plugin validation is a separate workflow, `marketplace-checks.yml`.
 
 One-time setup in the repository: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
@@ -28,6 +29,7 @@ One-time setup in the repository: **Settings → Pages → Build and deployment 
 | Path | Contents |
 |---|---|
 | `src/` | The static site: HTML, CSS and ES modules served as-is |
+| `src/i18n/en.json` | All user-facing text. Components reference keys only; `npm test` fails on missing, unused or hard-coded strings |
 | `scripts/` | `build.mjs` (repository → `dist/`), `serve.mjs` (dev server) |
 | `test/` | `node:test` suites and test-only fixtures |
 | `design/` | `Catalog.dc.html` (design source of truth) and the early prototype |

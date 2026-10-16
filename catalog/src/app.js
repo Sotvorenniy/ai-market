@@ -7,6 +7,7 @@ import { renderSearch } from './results.js';
 import { renderArtifact, renderPlugin } from './detail.js';
 import { renderGetStarted, renderWhatsNew } from './pages.js';
 import { createPalette } from './palette.js';
+import { applyStaticStrings, loadStrings, t } from './i18n.js';
 import { KINDS, copyText, esc, githubUrl, loadTheme, saveTheme } from './ui.js';
 
 const app = {
@@ -38,18 +39,20 @@ function renderLoading() {
 }
 
 function renderError(message) {
+  // Strings may be what failed to load; t() then falls back to readable keys.
   view.innerHTML = `<main class="page narrow"><div class="empty-block">
     <div class="empty-icon" aria-hidden="true">⚠</div>
-    <h2>The catalog didn't load</h2>
-    <p>${esc(message)} Check your connection and try again.</p>
-    <div class="row center"><button class="btn primary" type="button" data-retry>Try again</button></div>
+    <h2>${esc(t('load.title'))}</h2>
+    <p>${esc(t('load.text', { message }))}</p>
+    <div class="row center"><button class="btn primary" type="button" data-retry>${esc(t('load.retry'))}</button></div>
   </div></main>`;
 }
 
 async function load() {
   renderLoading();
   try {
-    const [config, catalog, releases] = await Promise.all([
+    const [, config, catalog, releases] = await Promise.all([
+      loadStrings('en'),
       fetchJson('search-config.json'),
       fetchJson('data/catalog.json'),
       fetchJson('data/releases.json').catch(() => []),
@@ -60,20 +63,24 @@ async function load() {
     app.plugins = new Map(catalog.plugins.map((p) => [p.name, p]));
     app.items = new Map(catalog.items.map((i) => [i.id, i]));
     app.index = createIndex(catalog.items, app.config);
+    applyStaticStrings();
+    applyTheme(document.documentElement.dataset.theme ?? 'dark');
+    setPaletteKey();
     const repoUrl = githubUrl(catalog.marketplace.repo);
     $('github-link').hidden = !repoUrl;
     if (repoUrl) $('github-link').href = repoUrl;
     $('brand-badge').textContent = catalog.marketplace.name;
     route();
   } catch (err) {
-    renderError(err instanceof Error ? err.message : 'Unknown error.');
+    renderError(err instanceof Error ? err.message : t('load.unknown'));
   }
 }
 
 /* ---------- routing ---------- */
 
-function setTitle(text) {
-  document.title = text ? `${text} · ${app.catalog.marketplace.name} catalog` : `${app.catalog.marketplace.name} catalog`;
+function setTitle(page) {
+  const name = app.catalog.marketplace.name;
+  document.title = page ? t('app.titleWith', { page, name }) : t('app.title', { name });
 }
 
 function route({ keepScroll = false } = {}) {
@@ -84,22 +91,22 @@ function route({ keepScroll = false } = {}) {
     if (document.activeElement !== headerInput && headerInput.value !== app.search.q) headerInput.value = app.search.q;
     view.innerHTML = renderSearch(app, app.search);
     app.lastListHash = searchHash(app.search);
-    setTitle(app.search.q ? `“${app.search.q}”` : 'Browse');
+    setTitle(app.search.q ? `“${app.search.q}”` : t('app.browse'));
   } else {
     if (document.activeElement !== headerInput) headerInput.value = '';
     if (name === 'plugin') {
       view.innerHTML = renderPlugin(app, pluginName);
-      setTitle(app.plugins.get(pluginName)?.displayName ?? 'Not found');
+      setTitle(app.plugins.get(pluginName)?.displayName ?? t('app.notFound'));
     } else if (name === 'artifact') {
       view.innerHTML = renderArtifact(app, itemId);
       const item = app.items.get(itemId);
-      setTitle(item ? `${item.plugin}:${item.name}` : 'Not found');
+      setTitle(item ? `${item.plugin}:${item.name}` : t('app.notFound'));
     } else if (name === 'whats-new') {
       view.innerHTML = renderWhatsNew(app);
-      setTitle("What's new");
+      setTitle(t('whatsNew.title'));
     } else if (name === 'get-started') {
       view.innerHTML = renderGetStarted(app);
-      setTitle('Get started');
+      setTitle(t('start.title'));
     } else {
       view.innerHTML = renderHome(app);
       app.lastListHash = '#/';
@@ -206,11 +213,15 @@ function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   const button = $('theme-toggle');
   button.textContent = theme === 'dark' ? '☾' : '☀';
-  button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  button.setAttribute('aria-label', t(theme === 'dark' ? 'theme.toLight' : 'theme.toDark'));
+}
+
+function setPaletteKey() {
+  const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+  $('palette-button').querySelector('kbd').textContent = t(mac ? 'header.paletteKeyMac' : 'header.paletteKeyOther');
 }
 
 /* ---------- boot ---------- */
 
 applyTheme(loadTheme());
-$('palette-button').querySelector('kbd').textContent = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘K' : 'Ctrl K';
 load();

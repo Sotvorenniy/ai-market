@@ -52,6 +52,7 @@ catalog/
 │   ├── app.js                     # loading, routing, header search, theme, clicks
 │   ├── home.js, results.js, detail.js, pages.js, palette.js   # screens
 │   ├── search.js, search-config.json, router.js, markdown.js, ui.js
+│   ├── i18n.js, i18n/en.json      # every user-facing string; components only use keys
 ├── scripts/
 │   ├── build.mjs                  # repo → dist/ (site + data + feed)
 │   ├── serve.mjs                  # local dev server
@@ -67,11 +68,13 @@ catalog/
 - `npm run build` writes `catalog/dist/`: the contents of `src/`, `data/catalog.json`, `data/releases.json`,
   `feed.xml` and `.nojekyll`.
 
-### Build and deploy (`.github/workflows/pages.yml`)
+### Build and deploy (`.github/workflows/catalog-site.yml`)
 
 - Triggers: push to `main`, push of tags matching `*--v*`, manual dispatch.
-- Job `build` (in `catalog/`): checkout with full history and tags → `npm test` → `npm run build` →
-  upload `catalog/dist` as the Pages artifact. Job `deploy`: `actions/deploy-pages`.
+- Three jobs, shown separately in the Actions UI and on PRs: **Test site** (`npm test`), **Build site**
+  (`npm run build`, uploads `catalog/dist`) and **Deploy to GitHub Pages** (push only, not on PRs).
+  Plugin validation runs in a different workflow, **Marketplace checks**, so the two never mix.
+- Triggers also include pull requests (test and build only).
 - One-time repository setting: Settings → Pages → Source: GitHub Actions.
 - The site is served from `https://sotvorenniy.github.io/ai-market/`. All paths are relative and routing
   uses the URL hash, so the `/ai-market/` base path needs no configuration.

@@ -2,7 +2,8 @@
 
 import { search } from './search.js';
 import { itemHash } from './router.js';
-import { esc, kindDot } from './ui.js';
+import { t } from './i18n.js';
+import { esc, kindDot, kindName } from './ui.js';
 
 const LIMIT = 8;
 
@@ -22,10 +23,10 @@ export function createPalette(app) {
       ? results.map((item, i) => `
         <a class="palette-row ${i === active ? 'active' : ''}" role="option" id="palette-opt-${i}" aria-selected="${i === active}" href="${esc(itemHash(item.id))}" data-palette-close>
           ${kindDot(item.type)}
-          <span class="grow min0 ellipsis"><span class="strong">${esc(item.displayName ?? item.name)}</span> <span class="faint small">· ${esc(item.type === 'plugin' ? 'plugin' : item.plugin)}</span></span>
-          <span class="mono faint xsmall cap">${esc(item.type)}</span>
+          <span class="grow min0 ellipsis"><span class="strong">${esc(item.displayName ?? item.name)}</span> <span class="faint small">· ${esc(item.type === 'plugin' ? t('palette.plugin') : item.plugin)}</span></span>
+          <span class="mono faint xsmall cap">${esc(kindName(item.type))}</span>
         </a>`).join('')
-      : '<div class="palette-empty">Nothing found</div>';
+      : `<div class="palette-empty">${esc(t('palette.empty'))}</div>`;
     input.setAttribute('aria-activedescendant', results.length ? `palette-opt-${active}` : '');
   }
 

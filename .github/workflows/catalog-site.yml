@@ -1,0 +1,72 @@
+# Catalog site (catalog/): test, build and publish to GitHub Pages.
+# Separate from "Marketplace checks" so the site status is visible on its own in the Actions UI and on PRs.
+# One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Catalog site
+
+on:
+  push:
+    branches: [main]
+    tags: ['*--v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: catalog-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: catalog
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # tests create git fixtures; full history keeps the environment close to the build
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+
+  build:
+    name: Build site
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: catalog
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # "updated" dates and the release feed come from git history and tags
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: catalog/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - id: deployment
+        uses: actions/deploy-pages@v4
