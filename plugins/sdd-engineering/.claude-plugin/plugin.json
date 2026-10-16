@@ -1,6 +1,6 @@
 {
   "name": "sdd-engineering",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Spec Driven Development workflow: spec-creator, implementation-planner, implementer and plan-verifier agents, the run-plan orchestration skill, workflow retrospectives and guard hooks.",
   "author": {
     "name": "sotvorenniy"

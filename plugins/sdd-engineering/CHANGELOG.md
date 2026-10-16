@@ -4,6 +4,8 @@ All notable changes to `sdd-engineering` are recorded here. The format follows [
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-16
+
 ### Added
 
 - Agents: `spec-creator`, `implementation-planner`, `implementer`, `plan-verifier`.
