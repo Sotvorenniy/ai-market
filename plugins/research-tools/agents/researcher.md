@@ -39,6 +39,8 @@ Pick the format that matches the task. For a mixed task, output both, then a 3-l
 
 ### A. Repository research report
 ```
+**TL;DR:** <the answer in one sentence>
+
 ## Question
 <restated in one sentence>
 
@@ -59,6 +61,8 @@ Pick the format that matches the task. For a mixed task, output both, then a 3-l
 
 ### B. External research report
 ```
+**TL;DR:** <the answer in one sentence>
+
 ## Question
 <restated in one sentence>
 
@@ -78,6 +82,7 @@ Pick the format that matches the task. For a mixed task, output both, then a 3-l
 ```
 
 ## Quality rules
+- Open every report with the one-sentence TL;DR line. If the question could not be answered, say so there.
 - Every conclusion must map to at least one evidence item.
 - Quote sparingly; summarize and point to the location.
 - Separate facts (evidenced) from inference (label it as such).
