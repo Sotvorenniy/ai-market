@@ -1,7 +1,7 @@
 # ai-market catalog
 
 The public catalog site for the `ai-market` Claude Code marketplace, published at
-https://github.com/Sotvorenniy/ai-market
+https://sotvorenniy.github.io/ai-market/.
 
 This folder is a self-contained project. It reads the marketplace from the repository root
 (`.claude-plugin/marketplace.json` and `plugins/`) and never changes it.
