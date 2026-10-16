@@ -25,10 +25,10 @@ jobs:
       run:
         working-directory: catalog
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # tests create git fixtures; full history keeps the environment close to the build
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: npm test
@@ -41,14 +41,14 @@ jobs:
       run:
         working-directory: catalog
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # "updated" dates and the release feed come from git history and tags
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: catalog/dist
 
@@ -67,6 +67,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
