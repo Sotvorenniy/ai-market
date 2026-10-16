@@ -64,6 +64,11 @@ site/                              # static source
   produce a warning in the job summary and the item is still published with what is available.
 - Plugin validation (`claude plugin validate`) is a separate PR workflow and out of scope here.
 
+### Local preview
+
+`npm run dev` serves `site/` on http://localhost:4173 and builds the data live from the repository on every
+request. `npm run dev -- --sample` uses the sample data in `scripts/dev/` instead (generated from the prototype).
+
 ## 4. Data
 
 ### 4.1 `data/catalog.json`
