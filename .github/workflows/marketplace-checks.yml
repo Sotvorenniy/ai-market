@@ -57,3 +57,17 @@ jobs:
             echo "::endgroup::"
           done
           exit $status
+
+  install:
+    name: Install plugins
+    # validate checks each manifest alone; this installs the catalog like a user and resolves dependencies.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Claude Code CLI
+        run: npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: Install every plugin and check it loads
+        run: npm run install-check
