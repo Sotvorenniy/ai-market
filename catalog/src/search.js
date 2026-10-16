@@ -1,5 +1,5 @@
 // Catalog search: plain-language queries over catalog items. Pure functions, no DOM access.
-// Algorithm and weights: docs/specs/catalog-site.md §5. Tunables live in search-config.json.
+// Algorithm and weights: catalog/docs/spec.md §5. Tunables live in search-config.json.
 
 const FIELDS = ['name', 'tags', 'description', 'plugin', 'body'];
 
