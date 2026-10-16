@@ -161,7 +161,8 @@ All logic lives in `site/search.js` as pure functions with unit tests. Configura
 4. **Stemming**: strip a trailing `s` from words longer than 3 letters (not `ss`).
 5. **Synonyms**: each term adds related terms from config (`pr → pull, request, review`, `db → database, sql`, …).
 6. **Matching** per term against each field's tokens: exact = 1, token starts with term (term ≥ 3 chars) = 0.75,
-   term starts with token (token ≥ 4 chars) = 0.6, edit distance 1 (both ≥ 5 chars) = 0.55.
+   term starts with token (token ≥ 4 chars) = 0.6, one typo (both ≥ 5 chars; a swap of neighbouring letters
+   counts as one typo) = 0.55. Each distinct token is compared once through a token → items index.
 7. **Field weights**: name 5, tags 4, description 2.5, plugin name 1.5, body 1.
 8. **Score** = sum over terms of weighted matches + 0.4 × the same for synonyms; multiplied by
    `0.4 + 0.6 × (matched terms / terms)`; × 1.6 when the item type equals the type hint.
@@ -274,8 +275,10 @@ Five steps with copy buttons (git access via `gh`, add marketplace, install, ena
 - `node --test` unit tests for `search.js` (tokenizer, stop words, type hints, synonyms, scoring order on a
   fixed fixture, highlighting with HTML in input) and `build-catalog.mjs` (fixture marketplace with each
   component type, an external plugin, a broken plugin, a rollback changelog).
-- Golden queries: a checked-in list of queries and the item that must rank first
-  (e.g. "review pull requests" → `code-review/skill/review-pr`). Runs in CI.
+- Golden queries (`scripts/test/fixtures/search-golden.json`): queries and the item that must rank first,
+  or a short list of acceptable first results when several answers are equally right
+  (e.g. "review pull requests" → `code-review/skill/review-pr`). Runs in CI. Uses sample data until real
+  plugins exist; then a second list runs against the real catalog.
 - Manual checklist before launch: both themes, 360px width, keyboard-only pass, copy buttons in Safari.
 
 ## 12. Later
