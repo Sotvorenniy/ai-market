@@ -1,0 +1,18 @@
+# Who reviews what. GitHub requests a review from the owners of every path a pull request touches.
+# Ownership means responsibility for review and maintenance, not exclusivity: anyone can contribute.
+# When a pattern matches several lines, the last one wins.
+
+# Default owner for the whole repository. Approves new plugins into the catalog.
+*                                   @Sotvorenniy
+
+# The catalog, CI and release tooling
+/.claude-plugin/                    @Sotvorenniy
+/.github/                           @Sotvorenniy
+/scripts/                           @Sotvorenniy
+/catalog/                           @Sotvorenniy
+
+# Plugins: add a line here when you add a plugin
+/plugins/architecture-review/       @Sotvorenniy
+/plugins/engineering-paved-path/    @Sotvorenniy
+/plugins/research-tools/            @Sotvorenniy
+/plugins/sdd-engineering/           @Sotvorenniy
