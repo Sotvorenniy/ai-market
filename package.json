@@ -1,0 +1,13 @@
+{
+  "name": "ai-market",
+  "private": true,
+  "type": "module",
+  "description": "Claude Code plugin marketplace",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "release": "node scripts/release.mjs",
+    "rollback": "node scripts/rollback.mjs"
+  }
+}
