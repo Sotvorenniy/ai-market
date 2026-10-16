@@ -10,3 +10,11 @@ All notable changes to `sdd-engineering` are recorded here. The format follows [
 - Skills: `run-plan`, `workflow-retro`, `spec-writing`, `engineering-insights`, `mermaid-diagram`.
 - Guard hooks that limit where each agent writes and which commands it runs.
 - Evals that check the agents and skills resolve through their plugin namespaces.
+
+### Changed
+
+- First stable release. From 1.0.0 on, removing or renaming a component needs a major version.
+
+### Fixed
+
+- The plugin loads after install: its `^1.0.0` dependency ranges now match the 1.0.0 releases of the plugins it depends on.

@@ -8,3 +8,7 @@ All notable changes to `engineering-paved-path` are recorded here. The format fo
 
 - Skills: react-best-practices, frontend-ui-architecture, react-testing-library, ux-review, fastify-best-practices, onion-architecture, drizzle-orm-patterns, postgresql-table-design, zod, security.
 - Third-party notices for the skills adapted from MIT-licensed upstream repositories.
+
+### Changed
+
+- First stable release. From 1.0.0 on, removing or renaming a component needs a major version.

@@ -20,6 +20,11 @@ The script refuses to run with uncommitted changes or outside `main`, bumps `plu
 Unreleased notes into a dated section, runs `claude plugin validate --strict` on the plugin and the
 marketplace, commits `release(code-review): v1.3.0` and creates the tag. If validation fails, nothing is committed.
 
+Validation does not resolve dependency ranges. After releasing, run `npm run install-check`: it installs
+every plugin into a throwaway Claude Code config and fails if one does not load, for example when a
+`dependencies` range such as `^1.0.0` matches no released version. Release a dependency before the
+plugins that depend on it.
+
 Bump rules: `patch` for fixes and wording, `minor` for new skills, agents or commands, `major` for
 removed or renamed components and changed `userConfig` keys.
 
