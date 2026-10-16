@@ -1,6 +1,6 @@
 {
   "name": "architecture-review",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Read-only architecture-reviewer agent that checks a change set against layering, code placement, contract and migration rules from engineering-paved-path.",
   "author": {
     "name": "sotvorenniy"

@@ -4,6 +4,8 @@ All notable changes to `architecture-review` are recorded here. The format follo
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-16
+
 ### Added
 
 - `architecture-reviewer` agent: read-only review of backend layering, frontend placement, contracts, packages and migrations, using the engineering-paved-path architecture skills.
