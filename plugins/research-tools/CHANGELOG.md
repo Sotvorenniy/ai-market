@@ -7,3 +7,4 @@ All notable changes to `research-tools` are recorded here. The format follows [K
 ### Added
 
 - `researcher` agent: read-only repository and external research with path:line and URL evidence.
+- Reports open with a one-sentence `TL;DR` line.

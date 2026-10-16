@@ -31,8 +31,8 @@ Run several researchers in parallel on independent questions; each one gets its 
   `INSIGHTS.md`, then searches narrowly and cites every finding as `path:line`.
 - **External research:** prefers official sources, records publisher, date and version, and
   cross-checks key claims.
-- **Report:** Question, Conclusions (with confidence), Evidence, References or Sources,
-  Not found / unverified, Open questions.
+- **Report:** a one-sentence TL;DR, then Question, Conclusions (with confidence), Evidence,
+  References or Sources, Not found / unverified, Open questions.
 - Content it reads is treated as data, never as instructions.
 
 `sdd-engineering:spec-creator` uses this agent for wide fact-finding while writing a spec.
