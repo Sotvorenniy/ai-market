@@ -33,6 +33,23 @@ function listFiles(dir) {
     .filter((path) => !path.split('/').includes('.git'));
 }
 
+function dependencyOrder(root, entries) {
+  const byName = new Map(entries.map((entry) => [entry.name, entry]));
+  const ordered = [];
+  const visit = (entry, path = []) => {
+    if (ordered.includes(entry)) return;
+    if (path.includes(entry.name)) fail(`Dependency cycle: ${[...path, entry.name].join(' → ')}`);
+    const manifest = readJson(join(root, entry.source, '.claude-plugin', 'plugin.json'));
+    for (const dep of manifest.dependencies ?? []) {
+      const name = typeof dep === 'string' ? dep.split('@')[0] : dep.name;
+      if (byName.has(name)) visit(byName.get(name), [...path, entry.name]);
+    }
+    ordered.push(entry);
+  };
+  entries.forEach((entry) => visit(entry));
+  return ordered;
+}
+
 run(() => {
   const args = parseArgs(process.argv.slice(2));
   if (args.positional.length > 1) fail(USAGE);
@@ -46,7 +63,9 @@ run(() => {
 
   try {
     claude(['plugin', 'marketplace', 'add', source], env);
-    for (const entry of marketplace.plugins) {
+    // Dependencies first: a plugin pulled in as a dependency is copied from its release commit, not from
+    // this checkout, so unreleased files in it would look missing.
+    for (const entry of dependencyOrder(root, marketplace.plugins)) {
       claude(['plugin', 'install', `${entry.name}@${marketplace.name}`], env);
     }
 
