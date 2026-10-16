@@ -1,0 +1,9 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ai-market",
+  "description": "Claude Code plugins, skills and agents for our teams.",
+  "owner": {
+    "name": "sotvorenniy"
+  },
+  "plugins": []
+}

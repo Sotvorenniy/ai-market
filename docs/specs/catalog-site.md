@@ -88,6 +88,8 @@ site/                              # static source
       "updated": "2026-10-09",
       "hasEvals": true,
       "path": "plugins/code-review",
+      "external": false,
+      "sourceUrl": null,
       "items": ["code-review/skill/review-pr"]
     }
   ],
