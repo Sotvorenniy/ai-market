@@ -1,0 +1,77 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ai-market-stable",
+  "description": "Stable channel of ai-market: each plugin pinned to its last verified release.",
+  "owner": {
+    "name": "sotvorenniy"
+  },
+  "plugins": [
+    {
+      "name": "architecture-review",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Sotvorenniy/ai-market.git",
+        "path": "plugins/architecture-review",
+        "ref": "architecture-review--v1.0.0"
+      },
+      "description": "Read-only architecture-reviewer agent that checks a change set against layering, code placement, contract and migration rules from engineering-paved-path.",
+      "category": "development",
+      "tags": [
+        "architecture",
+        "code-review",
+        "agent"
+      ]
+    },
+    {
+      "name": "engineering-paved-path",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Sotvorenniy/ai-market.git",
+        "path": "plugins/engineering-paved-path",
+        "ref": "engineering-paved-path--v1.0.0"
+      },
+      "description": "Engineering standards as skills: React, Fastify, onion and frontend architecture, React Testing Library, security, UX review, Zod, Drizzle ORM and PostgreSQL table design. Shared by the SDD and review plugins.",
+      "category": "development",
+      "tags": [
+        "standards",
+        "best-practices",
+        "architecture",
+        "security"
+      ]
+    },
+    {
+      "name": "research-tools",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Sotvorenniy/ai-market.git",
+        "path": "plugins/research-tools",
+        "ref": "research-tools--v1.0.0"
+      },
+      "description": "Read-only researcher agent that answers questions about the current repository or external sources with path:line and URL evidence.",
+      "category": "productivity",
+      "tags": [
+        "research",
+        "agent",
+        "read-only"
+      ]
+    },
+    {
+      "name": "sdd-engineering",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Sotvorenniy/ai-market.git",
+        "path": "plugins/sdd-engineering",
+        "ref": "sdd-engineering--v1.0.0"
+      },
+      "description": "Spec Driven Development workflow: spec-creator, implementation-planner, implementer and plan-verifier agents, the run-plan orchestration skill, workflow retrospectives and guard hooks.",
+      "category": "development",
+      "tags": [
+        "sdd",
+        "workflow",
+        "specs",
+        "planning",
+        "agents"
+      ]
+    }
+  ]
+}
