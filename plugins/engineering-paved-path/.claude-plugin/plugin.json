@@ -1,6 +1,6 @@
 {
   "name": "engineering-paved-path",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Engineering standards as skills: React, Fastify, onion and frontend architecture, React Testing Library, security, UX review, Zod, Drizzle ORM and PostgreSQL table design. Shared by the SDD and review plugins.",
   "author": {
     "name": "sotvorenniy"
