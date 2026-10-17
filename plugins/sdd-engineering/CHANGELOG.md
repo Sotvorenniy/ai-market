@@ -4,6 +4,11 @@ All notable changes to `sdd-engineering` are recorded here. The format follows [
 
 ## [Unreleased]
 
+### Added
+
+- `spec-check` skill: `/sdd-engineering:spec-check <spec>` runs the spec-writing self-check on one spec and answers `READY for planning` or `NOT READY` with each blocking finding and its line. Read-only.
+- Evals for `spec-check`: blocks an approved spec with gaps, and does not block a spec that passes.
+
 ## [1.0.0] - 2026-10-16
 
 ### Added

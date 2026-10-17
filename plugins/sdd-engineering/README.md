@@ -26,6 +26,7 @@ Installing it also installs its dependencies from the same marketplace:
 | `plan-verifier` | agent (sonnet) | Checks the code against every plan item and every AC with `path:line` or command evidence; scopes `code` and `final` |
 | `run-plan` | skill | `/sdd-engineering:run-plan <plan>`: drives an approved plan to a PR-ready state with checkpoints and resumable state |
 | `workflow-retro` | skill (manual only) | `/sdd-engineering:workflow-retro`: cost and quality retrospective of a finished run, with proposals |
+| `spec-check` | skill | `/sdd-engineering:spec-check <spec>`: read-only check that a spec is ready for planning, with each blocking finding and its line |
 | `spec-writing` | skill | The spec rules: template, EARS patterns, IDs, NFRs, revisions, self-check |
 | `engineering-insights` | skill | Recall and record non-obvious findings in per-package `INSIGHTS.md` files |
 | `mermaid-diagram` | skill | Mermaid syntax for workflow and sequence diagrams in specs |
@@ -57,6 +58,8 @@ flowchart LR
    ```
    claude --agent sdd-engineering:spec-creator
    ```
+   Before planning, run `/sdd-engineering:spec-check <spec>`: it answers `READY for planning` or
+   lists what blocks it, each with its line.
    As the main session it can launch `research-tools:researcher` agents in parallel; as a subagent it
    returns "Research requests" for you to run.
 2. **Plan.** Ask for `implementation-planner` with the spec path. It returns an Intake Report (spec
