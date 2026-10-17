@@ -1,6 +1,6 @@
 ---
 name: drizzle-orm-patterns
-description: Provides comprehensive Drizzle ORM patterns for schema definition, CRUD operations, relations, queries, transactions, and migrations. Proactively use for any Drizzle ORM development including defining database schemas, writing type-safe queries, implementing relations, managing transactions, and setting up migrations with Drizzle Kit. Supports PostgreSQL, MySQL, SQLite, MSSQL, and CockroachDB.
+description: "Drizzle ORM patterns: schema definition, type-safe queries, joins, relations, transactions and Drizzle Kit migrations, for PostgreSQL, MySQL and SQLite. Use for any Drizzle ORM code."
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 

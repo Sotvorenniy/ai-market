@@ -1,7 +1,7 @@
 ---
 name: onion-architecture
 version: 1.0.0
-description: "Onion Architecture for TypeScript backends built from feature modules (for example Fastify + Drizzle + Zod with a DI container / composition root). Enforces the dependency rule — every import points inward, from routes to services to ports/domain, with repositories and adapters implementing ports from the outside. Use this skill whenever you create or change a backend module, add a service, repository, route, port, adapter or use case, write a database query, touch the composition root (DI container), move backend code between files, or review a backend diff. Use it even when the user just says 'add an endpoint', 'where should this query go?', 'this route is getting big', 'add a new module' or mentions onion / hexagonal / clean architecture / ports and adapters. Uses dependency-cruiser as the mechanical gate. Does NOT cover Fastify API details (use engineering-paved-path:fastify-best-practices), Drizzle query syntax (engineering-paved-path:drizzle-orm-patterns), schema design (engineering-paved-path:postgresql-table-design) or the React client (engineering-paved-path:frontend-ui-architecture)."
+description: "Onion architecture for TypeScript backends (Fastify, Drizzle, Zod, DI container): the dependency rule that every import points inward, routes → services → ports/domain, with repositories and adapters implementing ports. Use when adding or changing a module, route, service, repository, port, adapter or query, deciding where backend code goes, or reviewing a backend diff, including 'where should this query go?' and hexagonal / clean / ports-and-adapters questions. Not for Fastify APIs, Drizzle syntax, schema design or the React client."
 ---
 
 # Onion Architecture — backend

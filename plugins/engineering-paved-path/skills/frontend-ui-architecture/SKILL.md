@@ -1,7 +1,7 @@
 ---
 name: frontend-ui-architecture
 version: 1.1.0
-description: "UI architecture and code placement for React + Next.js codebases — where code belongs, not how fast it renders. Use this skill whenever the question is structural: where to put a new component, file, constant, helper, utility, type or hook; how to split a component that has grown too big; where business logic should live versus UI; how to draw feature and module boundaries; how to organize an App Router project, route folders and the server/client boundary; or when reviewing a diff that adds new files or moves code around. Use it even when the user just says 'where should this go?', 'is this the right place for this?', 'how should I structure this feature?' or 'this component is getting messy'. Does NOT cover rendering performance, re-renders, memoization, hooks misuse or accessibility (use engineering-paved-path:react-best-practices), nor Next.js file-convention APIs such as metadata, fonts or image optimization."
+description: "Where code belongs in React + Next.js apps: placing components, hooks, helpers, types and constants; splitting a component that grew too big; business logic vs UI; feature boundaries; App Router folders and the server/client boundary. Use for 'where should this go?' or 'this component is getting messy', and when reviewing diffs that add or move files. Not for rendering performance, hooks correctness or accessibility (react-best-practices)."
 ---
 
 # Frontend UI Architecture
