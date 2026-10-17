@@ -15,19 +15,24 @@ until a maintainer promotes a release.
 
 ```
 /plugin marketplace add Sotvorenniy/ai-market#stable
+/plugin install engineering-paved-path@ai-market-stable
+/plugin install research-tools@ai-market-stable
+/plugin install architecture-review@ai-market-stable
 /plugin install sdd-engineering@ai-market-stable
 ```
+
+Install the dependencies first, in this order. A dependency that is not installed yet is resolved by
+its version range (`^1.0.0`) against the release tags, so `/plugin install sdd-engineering@ai-market-stable`
+on its own pulls the newest matching release of each dependency, not the stable one.
 
 To go back to stable from the latest channel (`ai-market`), remove that marketplace first. Removing it
 uninstalls its plugins, so the two copies of a plugin never load side by side:
 
 ```
 /plugin marketplace remove ai-market
-/plugin marketplace add Sotvorenniy/ai-market#stable
-/plugin install sdd-engineering@ai-market-stable
 ```
 
-Then restart Claude Code or run `/reload-plugins`.
+then run the commands above. Restart Claude Code or run `/reload-plugins`.
 
 ## Promote a release (maintainers)
 
