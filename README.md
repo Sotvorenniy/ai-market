@@ -59,6 +59,26 @@ There are two different updates:
 Refreshing the catalog does not update installed plugins by itself. A plugin changes for users only when
 its version is released, so merged but unreleased changes do not reach anyone yet.
 
+### Stable channel
+
+`ai-market` is the latest channel: every release reaches it at once. If a new version breaks your work,
+or you want only verified versions, use the stable channel `ai-market-stable` (branch `stable`). It
+pins each plugin to its last verified release, currently 1.0.0 for all four:
+
+```
+/plugin marketplace remove ai-market
+/plugin marketplace add Sotvorenniy/ai-market#stable
+/plugin install engineering-paved-path@ai-market-stable
+/plugin install research-tools@ai-market-stable
+/plugin install architecture-review@ai-market-stable
+/plugin install sdd-engineering@ai-market-stable
+```
+
+Install the dependencies first, in this order: a dependency that is not installed yet is resolved by
+its version range against the release tags and would come from the latest release. Removing
+`ai-market` uninstalls its plugins, so the two channels never load side by side. To return to latest,
+do the same the other way round.
+
 ## Something went wrong
 
 | Problem | Try |

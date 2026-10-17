@@ -43,6 +43,28 @@ Files added after the target release are removed.
 Rollback covers the plugin folder only. If the marketplace entry (description, tags, category) changed
 since the target release, revert it by hand.
 
+## Channels
+
+| Channel | Marketplace | Branch | Gets a release |
+|---|---|---|---|
+| Latest | `ai-market` | `main` | as soon as it is tagged |
+| Stable | `ai-market-stable` | `stable` | when a maintainer promotes it |
+
+The `stable` branch holds only `.claude-plugin/marketplace.json` and a README. Each entry is a
+`git-subdir` source pinned with `ref` to a `<plugin>--v<version>` tag. To promote a release, change the
+entry's `ref` on `stable` in a pull request, after the release passed its evals with 3 runs per case.
+
+Rolling users back through the channel (instead of a roll-forward release) is the fastest option for
+people who choose it: they switch to stable (see the README), and the latest channel stays as it is.
+
+Two things to know:
+
+- A dependency that is not installed yet resolves by its version range against the release tags, not
+  through the stable entry. Users therefore install dependencies first; the stable README lists the order.
+- Verified on 2026-10-17: installing from `ai-market` at 1.0.0, `marketplace update` left the plugins at
+  1.0.0, `plugin update sdd-engineering@ai-market` moved only that plugin to 1.1.0, and switching to
+  stable installed 1.0.0 of all four; the `sdd-engineering` smoke evals passed 4/4 on the stable copies.
+
 ## Emergency removal
 
 When a plugin must stop being installed at once, remove its entry from `.claude-plugin/marketplace.json`
