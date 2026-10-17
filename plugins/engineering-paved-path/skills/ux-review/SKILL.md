@@ -1,7 +1,7 @@
 ---
 name: ux-review
 version: 1.0.0
-description: "UX and accessibility review of a feature's design or behaviour for web applications: the UI state matrix (empty, loading, error, partial, rate-limited, dependency down, long text, many items, first use, stale), Nielsen's usability heuristics, a WCAG 2.2 AA checklist and wording / i18n rules. Produces gaps and improvement proposals as observable requirements, not code. Use this skill whenever you analyse a design source (text, Figma export, screenshots) or an existing screen for missing states, friction, unclear wording or accessibility problems; when writing UX or accessibility NFRs for a spec; or when the user says 'check the UX', 'what states are missing?', 'is this accessible?', 'review this screen' or 'improve this flow'. Does NOT cover where components live (use engineering-paved-path:frontend-ui-architecture), React or hook correctness (use engineering-paved-path:react-best-practices) or visual design taste."
+description: "UX and accessibility review of a web feature's design or screen: the UI state matrix (empty, loading, error, partial, long text, many items, first use, stale), Nielsen heuristics, WCAG 2.2 AA and wording. Produces gaps as observable requirements, not code. Use when checking a design, screenshot or screen for missing states, friction or accessibility problems, or writing UX NFRs for a spec. Not for component placement or React correctness."
 ---
 
 # UX review
