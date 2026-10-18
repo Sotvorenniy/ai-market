@@ -1,0 +1,46 @@
+# Installs both channels from GitHub the way a user does, in a fresh Claude Code config.
+# "Marketplace checks" installs from the checkout; this catches what only the published repository shows:
+# what main serves after a merge, release tags that dependency ranges resolve against, and the stable
+# channel's git-subdir pins. Pull requests into stable are checked by the workflow on the stable branch.
+name: Install from GitHub
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * *' # daily: a moved tag or a broken stable pin shows up without a push to main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: install-from-github-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLAUDE_CODE_VERSION: 2.1.301 # same pin as "Marketplace checks"; bump both together
+
+jobs:
+  install:
+    name: Install ${{ matrix.channel }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: latest
+            source: ${{ github.repository }}
+          - channel: stable
+            source: ${{ github.repository }}#stable
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # git-subdir pins and their tags are read from the history
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Claude Code CLI
+        run: npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: Install every plugin from GitHub
+        run: npm run install-check -- "${{ matrix.source }}"
