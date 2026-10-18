@@ -4,6 +4,10 @@ All notable changes to `architecture-review` are recorded here. The format follo
 
 ## [Unreleased]
 
+### Changed
+
+- `architecture-reviewer` applies the backend layering and frontend placement rules from the `onion-architecture` and `frontend-ui-architecture` skills instead of its own summary of them, so the two cannot drift apart. Contract, package and migration checks are unchanged.
+
 ## [1.0.0] - 2026-10-16
 
 ### Added
