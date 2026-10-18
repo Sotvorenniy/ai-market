@@ -69,5 +69,25 @@ check readonly-bash-guard.sh $S:plan-verifier Bash "npx eslint src --fix" deny
 check readonly-bash-guard.sh $S:plan-verifier Bash 'echo $(whoami)' deny
 check readonly-bash-guard.sh $S:implementer Bash "rm -rf x" none
 
+# Version log: one line per session, with the version from plugin.json and the marketplace from the path.
+log_test() {
+  local root=$1 expected_marketplace=$2 line
+  rm -rf "$CLAUDE_PROJECT_DIR"
+  CLAUDE_PLUGIN_ROOT=$root "$SCRIPTS/session-version-log.sh" <<<'{"session_id":"s1","source":"startup"}' >/tmp/sdd-log-out
+  line=$(tail -n 1 "$CLAUDE_PROJECT_DIR/.claude/cache/sdd-engineering/sessions.jsonl" 2>/dev/null)
+  if [[ ! -s /tmp/sdd-log-out ]] &&
+    jq -e --arg v "$(jq -r .version "$root/.claude-plugin/plugin.json")" --arg m "$expected_marketplace" \
+      '.version == $v and .marketplace == $m and .session_id == "s1" and .source == "startup"' <<<"$line" >/dev/null 2>&1; then
+    pass=$((pass + 1))
+  else
+    fail=$((fail + 1))
+    echo "FAIL session-version-log.sh [$expected_marketplace]: got '$line'"
+  fi
+}
+log_test "$SCRIPTS/.." local
+fake=$(mktemp -d)/.claude/plugins/cache/ai-market-stable/sdd-engineering/1.0.0
+mkdir -p "$fake" && cp -R "$SCRIPTS/../.claude-plugin" "$fake/"
+log_test "$fake" ai-market-stable
+
 echo "$pass passed, $fail failed"
 exit $((fail > 0))

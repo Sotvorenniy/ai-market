@@ -31,6 +31,7 @@ Installing it also installs its dependencies from the same marketplace:
 | `engineering-insights` | skill | Recall and record non-obvious findings in per-package `INSIGHTS.md` files |
 | `mermaid-diagram` | skill | Mermaid syntax for workflow and sequence diagrams in specs |
 | guard hooks | hooks | Limit where each agent may write and which commands it may run |
+| version log | hook | Records the active plugin version and marketplace for every session (see [Version log](#version-log)) |
 
 ## The workflow
 
@@ -107,6 +108,20 @@ other agents.
 
 Project-specific do-not-touch paths are not in the hooks: the planner lists them in plan §2 and the
 implementer follows them.
+
+## Version log
+
+A `SessionStart` hook appends one line per session to `.claude/cache/sdd-engineering/sessions.jsonl`
+in the project. It shows which version actually ran, for example after `plugin update` or after
+switching to the stable channel:
+
+```json
+{"ts":"2026-10-18T17:30:02Z","event":"session_start","plugin":"sdd-engineering","version":"1.2.0","marketplace":"ai-market","source":"startup","session_id":"…","plugin_root":"/Users/me/.claude/plugins/cache/ai-market/sdd-engineering/1.2.0"}
+```
+
+`marketplace` is `ai-market` (latest), `ai-market-stable` (stable) or `local` (`--plugin-dir`). The hook
+prints nothing, so it adds no model context, and it never blocks a session. Nothing leaves the machine.
+Set `SDD_VERSION_LOG=off` in your settings `env` to turn it off.
 
 ## Token-efficient hand-offs
 

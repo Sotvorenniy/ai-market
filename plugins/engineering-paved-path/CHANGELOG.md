@@ -8,7 +8,7 @@ All notable changes to `engineering-paved-path` are recorded here. The format fo
 
 ### Changed
 
-- Shorter descriptions for `onion-architecture`, `frontend-ui-architecture`, `ux-review`, `fastify-best-practices` and `drizzle-orm-patterns`: the plugin adds ~1,232 instead of ~1,907 tokens to every session. Trigger evals show the skills still load for tasks in their area (see docs/cost.md in the repository).
+- Shorter descriptions for `onion-architecture`, `frontend-ui-architecture`, `ux-review`, `fastify-best-practices` and `drizzle-orm-patterns`: the plugin adds ~1,232 instead of ~1,907 tokens to every session. Trigger evals show the skills still load for tasks in their area (see docs/COST-BASELINE.md in the repository).
 - Trigger evals for `fastify-best-practices` and `drizzle-orm-patterns`.
 
 ## [1.0.0] - 2026-10-16
