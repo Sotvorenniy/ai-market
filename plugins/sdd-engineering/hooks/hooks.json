@@ -1,6 +1,13 @@
 {
-  "description": "Write and Bash guards for the SDD agents. Each script acts only for its own agent (agent_type in the hook input) and needs jq.",
+  "description": "Write and Bash guards for the SDD agents, and a session log of the active plugin version. Each guard acts only for its own agent (agent_type in the hook input). All need jq.",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/session-version-log.sh" }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Edit|Write",

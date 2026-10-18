@@ -94,7 +94,7 @@ do the same the other way round.
 ## Contributing
 
 Want to change a plugin or add a new one? Read [CONTRIBUTING.md](CONTRIBUTING.md). Found a security
-problem? See [SECURITY.md](SECURITY.md). What the plugins cost in tokens: [docs/cost.md](docs/cost.md).
+problem? See [SECURITY.md](SECURITY.md). What the plugins cost in tokens: [docs/COST-BASELINE.md](docs/COST-BASELINE.md).
 
 ## Repository layout
 
