@@ -25,6 +25,13 @@ every plugin into a throwaway Claude Code config and fails if one does not load,
 `dependencies` range such as `^1.0.0` matches no released version. Release a dependency before the
 plugins that depend on it.
 
+The "Install from GitHub" workflow runs the same check against the published repository after every
+push to `main` (release commits included), daily, and on demand: `npm run install-check --
+Sotvorenniy/ai-market` for latest and `-- Sotvorenniy/ai-market#stable` for stable. For stable it also
+fails when an entry's `sha` is not the commit of its `ref`, when its `path` does not exist at that
+commit, or when the installed commit differs from the `sha`. Pull requests into `stable` run it through
+the workflow on that branch.
+
 Bump rules: `patch` for fixes and wording, `minor` for new skills, agents or commands, `major` for
 removed or renamed components and changed `userConfig` keys.
 
@@ -56,12 +63,13 @@ revert. Repeat the drill when `scripts/rollback.mjs` or the Claude Code version 
 | Latest | `ai-market` | `main` | as soon as it is tagged |
 | Stable | `ai-market-stable` | `stable` | when a maintainer promotes it |
 
-The `stable` branch holds only `.claude-plugin/marketplace.json` and a README. Each entry is a
-`git-subdir` source pinned with `ref` to a `<plugin>--v<version>` tag and `sha` to that tag's commit
-(`git rev-list -n 1 <tag>`). The `sha` is what gets installed: a tag can be moved, a commit cannot, so a
-moved or re-created tag does not change what stable users receive. The `ref` stays for people reading
-the file. To promote a release, change the entry's `ref` and `sha` on `stable` in a pull request, after
-the release passed its evals with 3 runs per case. Check that the two match before merging.
+The `stable` branch holds only `.claude-plugin/marketplace.json`, a README and the workflow that checks
+its pull requests. Each entry is a `git-subdir` source pinned with `ref` to a `<plugin>--v<version>` tag
+and `sha` to that tag's commit (`git rev-list -n 1 <tag>`). The `sha` is what gets installed: a tag can
+be moved, a commit cannot, so a moved or re-created tag does not change what stable users receive. The
+`ref` stays for people reading the file. To promote a release, change the entry's `ref` and `sha` on
+`stable` in a pull request, after the release passed its evals with 3 runs per case. The pull request's
+install check fails when the two do not match.
 
 Rolling users back through the channel (instead of a roll-forward release) is the fastest option for
 people who choose it: they switch to stable (see the README), and the latest channel stays as it is.

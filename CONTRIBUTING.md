@@ -72,6 +72,7 @@ claude plugin validate plugins/<name> --strict    # each plugin you changed
 bash tests/sdd-guards.test.sh                     # guard hooks
 npm test                                          # catalog website
 npm run install-check                             # every plugin installs and its dependencies resolve
+npm run install-check -- Sotvorenniy/ai-market#stable   # the same from GitHub (needs full history and tags)
 ```
 
 To try a plugin before it is merged, add your local checkout as a marketplace:
