@@ -1,0 +1,48 @@
+# Checks a change to the stable catalog before it reaches users: installs every plugin from this branch's
+# marketplace.json in a fresh Claude Code config, with the install check from main. It fails when an
+# entry's sha is not the commit of its ref, its path does not exist at that commit, or a plugin does not
+# install and load. The tools come from main because this branch holds only the catalog.
+name: Stable checks
+
+on:
+  push:
+    branches: [stable]
+  pull_request:
+    branches: [stable]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stable-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLAUDE_CODE_VERSION: 2.1.301 # same pin as main's workflows; bump them together
+
+jobs:
+  install:
+    name: Install stable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the stable catalog
+        uses: actions/checkout@v7
+        with:
+          path: channel
+      - name: Check out the tools from main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          path: tools
+          fetch-depth: 0 # the pinned commits and their tags are read from the history
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Claude Code CLI
+        run: npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: Validate the catalog
+        run: claude plugin validate channel --strict
+      - name: Install every plugin
+        working-directory: tools
+        run: npm run install-check -- "${GITHUB_WORKSPACE}/channel"

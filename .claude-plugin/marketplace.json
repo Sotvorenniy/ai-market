@@ -12,7 +12,8 @@
         "source": "git-subdir",
         "url": "https://github.com/Sotvorenniy/ai-market.git",
         "path": "plugins/architecture-review",
-        "ref": "architecture-review--v1.0.0"
+        "ref": "architecture-review--v1.0.0",
+        "sha": "6f8a76daf8a7f02e0e536161db37a021a4f9cf86"
       },
       "description": "Read-only architecture-reviewer agent that checks a change set against layering, code placement, contract and migration rules from engineering-paved-path.",
       "category": "development",
@@ -28,7 +29,8 @@
         "source": "git-subdir",
         "url": "https://github.com/Sotvorenniy/ai-market.git",
         "path": "plugins/engineering-paved-path",
-        "ref": "engineering-paved-path--v1.0.0"
+        "ref": "engineering-paved-path--v1.0.0",
+        "sha": "a335552827a59ac06c24ada295f9040953f2dfd9"
       },
       "description": "Engineering standards as skills: React, Fastify, onion and frontend architecture, React Testing Library, security, UX review, Zod, Drizzle ORM and PostgreSQL table design. Shared by the SDD and review plugins.",
       "category": "development",
@@ -45,7 +47,8 @@
         "source": "git-subdir",
         "url": "https://github.com/Sotvorenniy/ai-market.git",
         "path": "plugins/research-tools",
-        "ref": "research-tools--v1.0.0"
+        "ref": "research-tools--v1.0.0",
+        "sha": "deafd3b0e58627fd604a3d6800549a52523eff9a"
       },
       "description": "Read-only researcher agent that answers questions about the current repository or external sources with path:line and URL evidence.",
       "category": "productivity",
@@ -61,7 +64,8 @@
         "source": "git-subdir",
         "url": "https://github.com/Sotvorenniy/ai-market.git",
         "path": "plugins/sdd-engineering",
-        "ref": "sdd-engineering--v1.0.0"
+        "ref": "sdd-engineering--v1.0.0",
+        "sha": "d17aff6b7cd61c0ca1346bab5a98ce50bc5e205b"
       },
       "description": "Spec Driven Development workflow: spec-creator, implementation-planner, implementer and plan-verifier agents, the run-plan orchestration skill, workflow retrospectives and guard hooks.",
       "category": "development",

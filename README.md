@@ -1,8 +1,8 @@
 # ai-market: stable channel
 
-This branch holds only a catalog, `ai-market-stable`. Each entry points at a released, verified version
-of a plugin from the `main` branch, pinned by its `<plugin>--v<version>` tag. Nothing here changes
-until a maintainer promotes a release.
+This branch holds only a catalog, `ai-market-stable`, and the workflow that checks it. Each entry points
+at a released, verified version of a plugin from the `main` branch, pinned by the commit (`sha`) of its
+`<plugin>--v<version>` tag; the `ref` names the tag for readers. Nothing here changes until a maintainer promotes a release.
 
 | Plugin | Stable version |
 |---|---|
@@ -37,9 +37,11 @@ then run the commands above. Restart Claude Code or run `/reload-plugins`.
 ## Promote a release (maintainers)
 
 1. The release is tagged on `main` and its evals passed with 3 runs per case.
-2. On this branch, change the entry's `ref` to the new tag and the table above, then run
-   `claude plugin validate . --strict`.
+2. On this branch, change the entry's `ref` to the new tag, its `sha` to `git rev-list -n 1 <tag>`,
+   and the table above, then run `claude plugin validate . --strict`. Claude Code installs the `sha`,
+   so a `sha` that does not match the tag ships the wrong code.
 3. Open a pull request to `stable`. Users get the new version with `/plugin marketplace update
-   ai-market-stable` followed by `/plugin update <plugin>@ai-market-stable`.
+   ai-market-stable` followed by `/plugin update <plugin>@ai-market-stable`, then `/reload-plugins` or
+   a restart.
 
 The release process is described in `docs/release-and-rollback.md` on `main`.
