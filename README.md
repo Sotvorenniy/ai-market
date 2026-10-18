@@ -1,8 +1,8 @@
 # ai-market: stable channel
 
-This branch holds only a catalog, `ai-market-stable`. Each entry points at a released, verified version
-of a plugin from the `main` branch, pinned by the commit (`sha`) of its `<plugin>--v<version>` tag; the
-`ref` names the tag for readers. Nothing here changes until a maintainer promotes a release.
+This branch holds only a catalog, `ai-market-stable`, and the workflow that checks it. Each entry points
+at a released, verified version of a plugin from the `main` branch, pinned by the commit (`sha`) of its
+`<plugin>--v<version>` tag; the `ref` names the tag for readers. Nothing here changes until a maintainer promotes a release.
 
 | Plugin | Stable version |
 |---|---|
