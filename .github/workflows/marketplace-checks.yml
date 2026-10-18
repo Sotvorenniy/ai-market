@@ -17,6 +17,7 @@ concurrency:
 
 env:
   CLAUDE_CODE_VERSION: 2.1.301 # pinned: the validator gains checks over time; bump on purpose
+  GITLEAKS_VERSION: 8.28.0 # pinned for the same reason: new rules can flag old history
 
 jobs:
   validate:
@@ -24,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the secret scan reads the full history
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -36,6 +39,16 @@ jobs:
             echo "::error::Non-English (Cyrillic) text found in the lines above."
             exit 1
           fi
+      - name: Secret scan
+        run: |
+          # Scans the full git history, not only the current tree: a secret removed later is still published.
+          v="${GITLEAKS_VERSION}"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${v}"
+          curl -fsSLO "${base}/gitleaks_${v}_linux_x64.tar.gz"
+          curl -fsSLO "${base}/gitleaks_${v}_checksums.txt"
+          grep " gitleaks_${v}_linux_x64.tar.gz\$" "gitleaks_${v}_checksums.txt" | sha256sum --check
+          tar -xzf "gitleaks_${v}_linux_x64.tar.gz" gitleaks
+          ./gitleaks git --redact --no-banner .
       - name: Guard hook tests
         run: bash tests/sdd-guards.test.sh
       - name: No project-specific references in plugins

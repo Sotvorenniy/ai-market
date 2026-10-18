@@ -43,6 +43,12 @@ Files added after the target release are removed.
 Rollback covers the plugin folder only. If the marketplace entry (description, tags, category) changed
 since the target release, revert it by hand.
 
+Drilled on 2026-10-18 in a throwaway worktree, nothing pushed: `rollback research-tools --to 0.1.1`
+committed and tagged 1.0.1 with the 0.1.1 folder, validation passed, and a user installed at 1.0.0 got
+1.0.1 from `plugin update` (not from `marketplace update`); the CLI asked for a restart to apply it.
+0.1.1 and 1.0.0 differ only in version and changelog, so the drill proves the mechanism, not a content
+revert. Repeat the drill when `scripts/rollback.mjs` or the Claude Code version in CI changes.
+
 ## Channels
 
 | Channel | Marketplace | Branch | Gets a release |
@@ -51,8 +57,11 @@ since the target release, revert it by hand.
 | Stable | `ai-market-stable` | `stable` | when a maintainer promotes it |
 
 The `stable` branch holds only `.claude-plugin/marketplace.json` and a README. Each entry is a
-`git-subdir` source pinned with `ref` to a `<plugin>--v<version>` tag. To promote a release, change the
-entry's `ref` on `stable` in a pull request, after the release passed its evals with 3 runs per case.
+`git-subdir` source pinned with `ref` to a `<plugin>--v<version>` tag and `sha` to that tag's commit
+(`git rev-list -n 1 <tag>`). The `sha` is what gets installed: a tag can be moved, a commit cannot, so a
+moved or re-created tag does not change what stable users receive. The `ref` stays for people reading
+the file. To promote a release, change the entry's `ref` and `sha` on `stable` in a pull request, after
+the release passed its evals with 3 runs per case. Check that the two match before merging.
 
 Rolling users back through the channel (instead of a roll-forward release) is the fastest option for
 people who choose it: they switch to stable (see the README), and the latest channel stays as it is.
@@ -69,7 +78,21 @@ Two things to know:
 
 When a plugin must stop being installed at once, remove its entry from `.claude-plugin/marketplace.json`
 and add `"renames": { "<plugin>": null }`. With `forceRemoveDeletedPlugins: true` at the top level,
-Claude Code uninstalls it from users' machines on their next marketplace update.
+Claude Code uninstalls it from users' machines.
+
+Drilled on 2026-10-18 on a local copy of the catalog: `marketplace update` alone left the plugin
+installed and enabled; it was uninstalled when the next Claude Code session started. Sessions already
+open keep it until they restart, so tell users to restart.
+
+What the uninstall does not clean up:
+
+- In the drill the plugin's folders stayed in the plugin cache (`~/.claude/plugins/cache/ai-market/<plugin>/`)
+  after the uninstall. They are no longer loaded, but their files are still on disk.
+- Files the plugin wrote into projects stay. For `sdd-engineering` that is `.claude/cache/retro/`, the
+  insights ledger, specs and plans. If the plugin is removed because of what it wrote, say which files
+  to delete in the announcement.
+- No plugin ships an MCP server, a daemon or stored credentials today. A plugin that adds one must
+  document its own cleanup steps here before it is accepted.
 
 ## Options
 
