@@ -4,6 +4,8 @@ All notable changes to `sdd-engineering` are recorded here. The format follows [
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-18
+
 ### Added
 
 - Session version log: a `SessionStart` hook appends the active `sdd-engineering` version and the marketplace it came from (`ai-market`, `ai-market-stable` or `local`) to `.claude/cache/sdd-engineering/sessions.jsonl` in the project. It prints nothing, so it costs no context. Turn it off with `SDD_VERSION_LOG=off`.
