@@ -116,7 +116,7 @@ in the project. It shows which version actually ran, for example after `plugin u
 switching to the stable channel:
 
 ```json
-{"ts":"2026-10-18T17:30:02Z","event":"session_start","plugin":"sdd-engineering","version":"1.2.0","marketplace":"ai-market","source":"startup","session_id":"…","plugin_root":"/Users/me/.claude/plugins/cache/ai-market/sdd-engineering/1.2.0"}
+{"ts":"2026-10-18T17:30:02Z","event":"session_start","plugin":"sdd-engineering","version":"1.2.0","marketplace":"ai-market","source":"startup","session_id":"…","plugin_root":"~/.claude/plugins/cache/ai-market/sdd-engineering/1.2.0"}
 ```
 
 `marketplace` is `ai-market` (latest), `ai-market-stable` (stable) or `local` (`--plugin-dir`). The hook
