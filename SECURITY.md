@@ -37,7 +37,9 @@ These are enforced in review and, where possible, in CI ([CONTRIBUTING.md](CONTR
   Edit, Write or Bash.
 - **Hooks and scripts get extra review.** Any change under `hooks/` or `scripts/` of a plugin needs
   the plugin owner's approval and must keep `tests/sdd-guards.test.sh` green. Guards fail closed.
-- **No secrets, no absolute paths, no `../`.** CI rejects `/Users/...` and `/home/...` in plugins.
+- **No secrets, no absolute paths, no `../`.** CI rejects `/Users/...` and `/home/...` in plugins and
+  runs gitleaks over the full git history. A green scan is not a review: read what a plugin ships,
+  including scripts, hooks and any file it writes.
 - **No downloads at runtime.** Scripts do not fetch and run code from the network.
 - **Third-party content** keeps its license and is listed in the plugin's `THIRD_PARTY_NOTICES.md`.
 - **Releases only through `npm run release`**, so every version a user receives has passed

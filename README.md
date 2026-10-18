@@ -59,6 +59,9 @@ There are two different updates:
 Refreshing the catalog does not update installed plugins by itself. A plugin changes for users only when
 its version is released, so merged but unreleased changes do not reach anyone yet.
 
+An update takes effect in new sessions only. After `/plugin update`, run `/reload-plugins` or restart
+Claude Code; a session that was already open keeps the old version until then.
+
 ### Stable channel
 
 `ai-market` is the latest channel: every release reaches it at once. If a new version breaks your work,
