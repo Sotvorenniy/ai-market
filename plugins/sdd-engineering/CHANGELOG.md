@@ -4,6 +4,10 @@ All notable changes to `sdd-engineering` are recorded here. The format follows [
 
 ## [Unreleased]
 
+### Added
+
+- `COMPATIBILITY.md`: the Claude Code, dependency and tool versions each release was tested with, and the Claude Code behaviour the plugin relies on.
+
 ## [1.1.1] - 2026-10-18
 
 ### Added

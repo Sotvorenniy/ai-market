@@ -14,7 +14,8 @@ Installing it also installs its dependencies from the same marketplace:
 [`architecture-review`](../architecture-review).
 
 **Requirements:** `git`, and `jq` for the guard hooks (without `jq` the guards deny the guarded calls).
-`node` 18+ for `workflow-retro`.
+`node` 18+ for `workflow-retro`. Tested Claude Code and dependency versions are in
+[COMPATIBILITY.md](COMPATIBILITY.md).
 
 ## What is inside
 

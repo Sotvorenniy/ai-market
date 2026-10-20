@@ -3,6 +3,9 @@
 Thanks for helping. This guide covers how to change the catalog safely: every merged change can end up
 on many people's machines, so a few rules matter more here than in a normal codebase.
 
+Writing a plugin? [docs/PLUGIN-GUIDELINES.md](docs/PLUGIN-GUIDELINES.md) has naming, the required
+structure and the manifest fields in one place.
+
 ## Before you start
 
 You need Node 20+, `jq` and the Claude Code CLI (`claude`). There are no npm dependencies to install.
@@ -50,6 +53,9 @@ because Claude Code updates a plugin only when its version changes. See
    ├── README.md                    what it does, how to install and use it
    └── CHANGELOG.md                 starts with a ## [Unreleased] section
    ```
+
+   See [docs/PLUGIN-GUIDELINES.md](docs/PLUGIN-GUIDELINES.md) for the full layout, including `evals/`
+   and `COMPATIBILITY.md`.
 
 2. Fill in `plugin.json`: `name`, `version` (`0.1.0`), `description`, `author`, `homepage`
    (`https://sotvorenniy.github.io/ai-market/#/plugin/<name>`), `repository` (a string URL) and
